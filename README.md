@@ -1,6 +1,3 @@
-PyAAT
-=====
-
 :Name: PyAAT
 :Description: Python Aerospace Analysis Toolbox 
 :Website: https://github.com/KenedyMatiasso/PyAAT

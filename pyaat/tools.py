@@ -1,3 +1,11 @@
+"""
+Python Aerospace Analysis Toolbox - PyAAT
+Copyright (c) 2021 Kenedy Matiasso Portella
+Distributed under MIT License
+
+This file contains most of tools that can be used by PyAAT.
+"""
+
 from numpy import cos, sin, array, radians, degrees
 
 def C1(theta):

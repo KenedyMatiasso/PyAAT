@@ -3,11 +3,13 @@ Python Aerospace Analysis Toolbox - PyAAT
 Copyright (c) 2021 Kenedy Matiasso Portella
 Distributed under MIT License
 
-This file contains most of constants that can be used by PyAAT.
+This is the main file of PyAAT.
 """
-from numpy import sin, cos, tan, interp, array, pi
+
+from numpy import sin, cos, tan, array, pi
 from scipy.optimize import fsolve
 
+from atmosphere import atmosISA
 
 R_AIR = 287.05287
 H=10000
@@ -29,23 +31,10 @@ rhoi=0.41271
 nrho=0.775
 g=9.80665
 
-
-def ISA(_altitude):
-    _parameters = array(
-            [[0., 1524., 3048., 4572., 6096., 7620., 9144., 10668., 12192.],                    # geometric altitude [m]
-             [288.15, 278.25, 268.35, 258.45, 248.55, 238.65, 228.75, 218.85, 216.65],          # base atmospheric temperature [K]
-             [101300., 84300., 69700, 57200, 46600, 37600, 30100, 23800, 18800]])      # base atmospheric pressure [Pa]
-    
-    _pressure = interp(_altitude,_parameters[0], _parameters[2])
-    _temperature= interp(_altitude, _parameters[0], _parameters[1])
-    
-    return _pressure / (R_AIR * _temperature)
-
 def propulsion(delta_p,V,rho):
     F = delta_p*Fmaxi*(rho/rhoi)**(nrho)*(V/Vi)**nv
     Mt =F*zt
     return F,Mt
-
 
 def modeloAerodinamico(V,rho,alpha,beta,p,q,r,delta_e,delta_a,delta_r):
     Vinf=224.6
@@ -118,8 +107,9 @@ def dynamics(t,X,U):
     delta_r = U[3]
     
     # Atmospheric model
-    rho = ISA(H)
-    
+    atmosphere._altitude = H
+    rho =atmosphere._rho
+
     # Propulsive model
     F,Mf = propulsion(delta_p,V,rho)
     
@@ -197,6 +187,8 @@ def obj(z):
 
 #Xg = [200,2*pi/180,0,0,2*pi/180,0,0,0,0,0,0,5000]
 #Ug = [0.3,2*pi/180,0,0]
+
+atmosphere = atmosISA()
 
 
 VE = 200.

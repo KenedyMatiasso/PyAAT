@@ -3,8 +3,6 @@ Python Aerospace Analysis Toolbox - PyAAT
 Copyright (c) 2021 Kenedy Matiasso Portella
 Distributed under MIT License
 
-Version control:
-
 This file contains most of constants that can be used by PyAAT.
 """
 

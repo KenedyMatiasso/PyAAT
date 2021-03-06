@@ -30,7 +30,7 @@ R_EARTH = 6378e3            # mean equatorial radius of the Earth [m]
 
 # source: A. Tewary, Atmospheric ans Space Flight Dynamics, Boston: Birkhauser, 2007.
 G = 6.67259e-11             # universal gravitational constant [m**3/kg/s**2]
-MU_EARTH = 3.986004e14      # G*M_EARTH [m**3/s**2]
+MU_EARTH = 3.986004418e14      # G*M_EARTH [m**3/s**2]
 M_EARTH = 5.972e24          # Earth's mass [kg]
 J2 = 1.08263e-3             # Jeffery’s constant for Earth's 2nd spherical harmonic [null]
 J3 = -2.532153e-7           # Jeffery’s constant for Earth's 3th spherical harmonic [null]

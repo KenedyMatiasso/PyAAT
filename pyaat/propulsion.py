@@ -5,5 +5,33 @@ Distributed under MIT License
 
 propulsion model for turbo-propeller engine
 """
-from numpy import array
+
+from numpy import array, cross
 from constants import RHO_SEA
+
+class SimpleModel(object):
+    def __init__(self):
+        # control
+        self.delta_p = 0.0
+        
+        # States
+        self.TAS = 0.0
+        self.rho = RHO_SEA
+        
+        # parameters
+        self.Fmaxi = 70.e3
+        self.nrho = 0.775
+        self.rhoi = 0.41271
+        self.nv = 0
+        self.Vi = 200.0
+        self.position = array([0,0,1.42])
+        self.attitude = array([0.,0.,0.])
+        
+    @property
+    def Forces(self):
+        Fx = self.delta_p*self.Fmaxi*(self.rho/self.rhoi)**(self.nrho)*(self.TAS/self.Vi)**self.nv
+        return array([Fx, 0.0, 0.0])
+    
+    @property
+    def Moments(self):
+        return cross(self.Forces, self.position)

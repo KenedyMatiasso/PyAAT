@@ -112,9 +112,9 @@ class Aircraft(object):
         return self.Cn0 + self.Cnb*self.beta + self.bw/self.Vinf*(self.Cnp*self.p + self.Cnr*self.r + self.Cnbd*self.beta_d) + self.Cnda*self.delta_a + self.Cndr*self.delta_r
     
     @property
-    def AeroForces(self):
+    def Forces(self):
         return self.qdyn*self.Sw*array([-self.CD, -self.CY, -self.CL])
     
     @property
-    def AeroMoments(self):
+    def Forces(self):
         return self.qdyn*self.Sw*array([self.bw, self.Cbarw, self.bw])*array([self.Cl, self.Cm, self.Cn])

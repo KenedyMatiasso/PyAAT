@@ -3,10 +3,12 @@ Python Aerospace Analysis Toolbox - PyAAT
 Copyright (c) 2021 Kenedy Matiasso Portella
 Distributed under MIT License
 
+Before you run this example, move this file to forder PyAAt/pyaat
+
 Example using aerodynamic model
 """
 
-from Aerodynamic import Aircraft
+from aerodynamic import Aircraft
 from numpy import radians
 from atmosphere import atmosISA
 

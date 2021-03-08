@@ -3,6 +3,11 @@ logs/
 build/
 bin/
 lib/
+
+test/
+test
+pyaat/General.py
+
 msg_gen/
 srv_gen/
 msg/*Action.msg

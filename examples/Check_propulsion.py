@@ -24,7 +24,7 @@ thrust = []
 
 for h in hlist:
     atmos._altitude = h
-    prop.rho = atmos._rho
+    prop._rho = atmos._rho
     thrust.append(prop.Forces[0])
     
 plt.figure()
@@ -49,21 +49,21 @@ h2 = 8000
 h3 = 12000
 
 atmos._altitude = h1
-prop.rho = atmos._rho
+prop._rho = atmos._rho
 
 for tr in troatlelist:
     prop.delta_p = tr
     thrust.append(prop.Forces[0])
     
 atmos._altitude = h2
-prop.rho = atmos._rho
+prop._rho = atmos._rho
 
 for tr in troatlelist:
     prop.delta_p = tr
     thrust2.append(prop.Forces[0])
     
 atmos._altitude = h3
-prop.rho = atmos._rho
+prop._rho = atmos._rho
 
 for tr in troatlelist:
     prop.delta_p = tr

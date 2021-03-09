@@ -8,7 +8,7 @@ Version control:
 
 This file implements the gravity models that can be used by PyAAT.
 """
-from tools import earth2body
+
 import numpy as np
 from constants import GRAVITY, MU_EARTH, R_EARTH, J2, J3, J4
 from numpy import radians, sin, cos, array, sqrt

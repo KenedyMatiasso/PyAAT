@@ -187,7 +187,7 @@ class plotter(object):
         plt.grid()
         plt.subplot(312)
         plt.plot(self.time, degrees(self.q), color = 'red')
-        plt.ylabel('$p$ [deg/s]')
+        plt.ylabel('$q$ [deg/s]')
         plt.grid()
         plt.subplot(313)
         plt.plot(self.time, degrees(self.r), color = 'red')

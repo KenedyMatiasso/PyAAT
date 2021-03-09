@@ -15,10 +15,10 @@ from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
 from tools import trimmer, printInfo, trimmerClimb
 from post_processing import plotter
 
-from numpy import array, cross, arange
+from numpy import array, cross, arange, radians
 from scipy.integrate import odeint
 
-def dynamic(X,U):
+def dynamics(X,U):
     # State space
     x = X[0]
     y = X[1]
@@ -128,7 +128,7 @@ def dynamic(X,U):
     return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
 
 def simularaviao(X,t):
-    Xp = dynamic(X,Ue)
+    Xp = dynamics(X,Ue)
     return Xp
 
 atmosphere = atmosISA()
@@ -145,18 +145,24 @@ HE = 10000
 UE = 200
 dH = 5
 
-#Xe, Ue = trimmer(dynamic,HE, UE)
-Xe, Ue = trimmerClimb(dynamic,HE, UE, dH)
+Xe, Ue = trimmer(dynamics,HE, UE)
+#Xe, Ue = trimmerClimb(dynamics,HE, UE, dH)
 
 
-sol = list(dynamic(Xe,Ue))
+sol = list(dynamics(Xe,Ue))
 printInfo(Xe,Ue, frame ='aero')
 printInfo(Xe,Ue, frame='controls')
 
 T0=0
-TF=120
+TF=180
 dt=0.01
 time = arange(T0, TF, dt)
+
+Xe[5] = Xe[5] + 0.0
+Xe[4] = Xe[4] + 0.0
+
+Ue[1] = Ue[1] + radians(0)
+Ue[2] = Ue[2] + radians(0)
 
 solution = odeint(simularaviao, Xe, time)
 
@@ -179,10 +185,9 @@ pltr.states = solution
 pltr.time = time
 pltr.control = control
 
+pltr.LinVel(frame = 'body')
 pltr.LinVel(frame = 'aero')
 pltr.LinPos()
 pltr.Attitude()
 pltr.AngVel()
 pltr.Controls()
-
-

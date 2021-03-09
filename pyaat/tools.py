@@ -515,3 +515,12 @@ def printInfo(X, U, frame = 'body'):
         print('-------------')
         print('r')
         print(degrees(r))
+
+def linearization(dynamics, Xe, Ue):
+    dX = array([0.1, 0.01, 0.01, 0.01, radians(0.1), radians(0.1), radians(0.1), radians(0.1), radians(0.1), radians(0.1)])
+    dU = array([0.01, radians(0.1), radians(0.1), radians(0.1)])
+    A = 0.0
+    for i in range(0,len(dX)):
+        Xe[i+2] = Xe[i+2] + dX[i]
+    
+    return 0.0

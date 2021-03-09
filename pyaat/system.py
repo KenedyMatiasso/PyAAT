@@ -12,9 +12,10 @@ from gravity import NewtonGravity
 from airplane import airplane
 
 from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
+from tools import body2aero
 
 from scipy.optimize import least_squares
-from numpy import array, degrees, radians, cross, cos
+from numpy import array, degrees, radians, cross, cos, sin, sqrt
 
 
 def dynamic(X,U):
@@ -79,7 +80,6 @@ def dynamic(X,U):
     propulsion._rho = rho
     F_prop_body = propulsion.Forces
     M_prop_body = propulsion.Moments
-    print(F_prop_body)
     
     """
     Kinematics
@@ -105,14 +105,25 @@ def dynamic(X,U):
     u_d = uvw_d[0]
     v_d = uvw_d[1]
     w_d = uvw_d[2]
-    
+        
     # Angular Dynamics
-    
     Moments = M_aero_body + M_prop_body
     pqr_d = InvInertia.dot(Moments + cross(pqr, Inertia.dot(pqr)))
     p_d = pqr_d[0]
     q_d = pqr_d[1]
     r_d = pqr_d[2]
+    
+    # Obtain alpha_d and beta_d to use on next iteration of the aeodynamic model
+    # TODO: It slows down strongly the simulation.
+    
+    '''
+    Valphabeta_d = array([1., 1./(TAS),1./(TAS*cos(beta))])*body2aero(uvw_d, alpha, beta)
+    beta_d = Valphabeta_d[1]
+    alpha_d = Valphabeta_d[2]
+    # Send information to aerodynamic model
+    aerodynamic.alpha_d = alpha_d
+    aerodynamic.beta_d = beta_d
+    '''
     
     return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
 
@@ -121,7 +132,6 @@ def obj(Z):
     xe = 0.0
     ye = 0.0
     ze = -HE
-    ue = UE
     ve = 0.0
     we = Z[0]   
     phie = 0.0
@@ -131,6 +141,8 @@ def obj(Z):
     qe = 0.0
     re = 0.0
     
+    ue = UE #sqrt(UE**2 - we**2 -ve**2 )
+
     delta_ae = 0.0
     delta_re = 0.0
     delta_pe = Z[2]
@@ -153,8 +165,8 @@ m = airplane._mass
 Inertia = airplane.inertia
 InvInertia = airplane.invInertia
 
-HE = 10000
-UE = 200
+HE = 5000
+UE = 150
 
 wg = 5
 thetag = radians(3)
@@ -176,18 +188,6 @@ we = root.x[0]
 thetae = root.x[1]
 delta_ee = root.x[3]
 delta_pe = root.x[2]
-ue = UE
-
-'''
-root = array([5.8911, radians(1.6879), radians(-1.1753), 0.3459])
-alphae = radians(1.6879)
-Ve = 200
-we = root[0]
-thetae = root[1]
-delta_ee = root[2]
-delta_pe = root[3]
-ue = Ve*cos(alphae)
-'''
 
 xe = 0.0
 ye = 0.0
@@ -201,6 +201,7 @@ re = 0.0
 delta_ae = 0.0
 delta_re = 0.0
 
+ue = UE #sqrt(UE**2 - we**2 -ve**2 )
 
 Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
 Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
@@ -233,3 +234,33 @@ print(degrees(Ue[3]))
 print('-------------------------------------------------------')
 print('-------------------------------------------------------')
 print(sol)
+
+'''
+Ve = 200.
+alphae = radians(2.0)
+betae = radians(3.0)
+phie = radians(-5.0)
+thetae = radians(2.0)
+psie = radians(2.0)
+pe = 2e-3
+qe = 4e-3
+re = 1e-3
+x0e = 0.
+y0e =0.
+He = 5000.
+
+dpe = 0.3
+dee = radians(2.0)
+dae = radians(6.0)
+dre = radians(5.0)
+
+ue = Ve*cos(alphae)*cos(betae)
+ve = Ve*sin(betae)
+we = Ve*sin(alphae)*cos(betae)
+
+Xg = array([x0e, y0e, -He, ue, ve, we, phie, thetae, psie, pe, qe, re])
+Ug = [dpe,dee,dae,dre]
+
+sol = list(dynamic(Xg,Ug))
+'''
+

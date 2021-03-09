@@ -12,11 +12,11 @@ from gravity import NewtonGravity
 from airplane import airplane
 
 from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from tools import body2aero
+from tools import trimmer, printInfo, trimmerClimb
+from post_processing import plotter
 
-from scipy.optimize import least_squares
-from numpy import array, degrees, radians, cross, cos, sin, sqrt
-
+from numpy import array, cross, arange
+from scipy.integrate import odeint
 
 def dynamic(X,U):
     # State space
@@ -127,33 +127,9 @@ def dynamic(X,U):
     
     return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
 
-
-def obj(Z):
-    xe = 0.0
-    ye = 0.0
-    ze = -HE
-    ve = 0.0
-    we = Z[0]   
-    phie = 0.0
-    psie = 0.0
-    thetae = Z[1]
-    pe = 0.0
-    qe = 0.0
-    re = 0.0
-    
-    ue = UE #sqrt(UE**2 - we**2 -ve**2 )
-
-    delta_ae = 0.0
-    delta_re = 0.0
-    delta_pe = Z[2]
-    delta_ee = Z[3]
-
-    Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
-    Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
-    
-    sol = dynamic(Xe, Ue)
-    Zp = array([sol[2], sol[3], sol[5], degrees(sol[10])])
-    return Zp
+def simularaviao(X,t):
+    Xp = dynamic(X,Ue)
+    return Xp
 
 atmosphere = atmosISA()
 propulsion = SimpleModel()
@@ -165,102 +141,48 @@ m = airplane._mass
 Inertia = airplane.inertia
 InvInertia = airplane.invInertia
 
-HE = 5000
-UE = 150
+HE = 10000
+UE = 200
+dH = 5
 
-wg = 5
-thetag = radians(3)
-delta_pg = 0.3
-delta_eg = radians(-5)
-Zg = array([wg , thetag, delta_pg, delta_eg])
+#Xe, Ue = trimmer(dynamic,HE, UE)
+Xe, Ue = trimmerClimb(dynamic,HE, UE, dH)
 
-wlim = [-20,20]
-thetalim = [radians(-20), radians(20)]
-delta_p_lim = [0,1]
-delta_e_lim = [radians(-30), radians(30)]
-
-boundary1 = (wlim[0], thetalim[0], delta_p_lim[0],delta_e_lim[0])
-boundary2 = (wlim[1], thetalim[1], delta_p_lim[1],delta_e_lim[1])
-
-
-root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
-we = root.x[0]
-thetae = root.x[1]
-delta_ee = root.x[3]
-delta_pe = root.x[2]
-
-xe = 0.0
-ye = 0.0
-ze = -HE
-phie = 0.0
-psie = 0.0
-ve = 0.0
-pe = 0.0
-qe = 0.0
-re = 0.0
-delta_ae = 0.0
-delta_re = 0.0
-
-ue = UE #sqrt(UE**2 - we**2 -ve**2 )
-
-Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
-Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
 
 sol = list(dynamic(Xe,Ue))
+printInfo(Xe,Ue, frame ='aero')
+printInfo(Xe,Ue, frame='controls')
 
-alpha, beta, TAS = computeTAS([ue,ve,we])
+T0=0
+TF=120
+dt=0.01
+time = arange(T0, TF, dt)
 
-print('V')
-print(TAS)
-print('-------------')
-print('alpha')
-print(degrees(alpha))
-print('-------------')
-print('beta')
-print(degrees(beta))
-print('-------------')
-print('dp')
-print(Ue[0]*100)
-print('-------------')
-print('de')
-print(degrees(Ue[1]))
-print('-------------')
-print('da')
-print(degrees(Ue[2]))
-print('-------------')
-print('dr')
-print(degrees(Ue[3]))
+solution = odeint(simularaviao, Xe, time)
 
-print('-------------------------------------------------------')
-print('-------------------------------------------------------')
-print(sol)
+# Create control vector (plot purpuses only)
+dp = []
+de = []
+da = []
+dr = []
 
-'''
-Ve = 200.
-alphae = radians(2.0)
-betae = radians(3.0)
-phie = radians(-5.0)
-thetae = radians(2.0)
-psie = radians(2.0)
-pe = 2e-3
-qe = 4e-3
-re = 1e-3
-x0e = 0.
-y0e =0.
-He = 5000.
+for t in time:
+    dp.append(Ue[0])
+    de.append(Ue[1])
+    da.append(Ue[2])
+    dr.append(Ue[3])
 
-dpe = 0.3
-dee = radians(2.0)
-dae = radians(6.0)
-dre = radians(5.0)
+control = array([dp, de, da, dr])    
 
-ue = Ve*cos(alphae)*cos(betae)
-ve = Ve*sin(betae)
-we = Ve*sin(alphae)*cos(betae)
+pltr = plotter()
+pltr.states = solution
+pltr.time = time
+pltr.control = control
 
-Xg = array([x0e, y0e, -He, ue, ve, we, phie, thetae, psie, pe, qe, re])
-Ug = [dpe,dee,dae,dre]
+pltr.LinVel(frame = 'aero')
+pltr.LinPos()
+pltr.Attitude()
+pltr.AngVel()
+pltr.Controls()
 
-sol = list(dynamic(Xg,Ug))
-'''
 

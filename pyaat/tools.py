@@ -7,7 +7,7 @@ This file contains most of tools that can be used by PyAAT.
 """
 
 from numpy import cos, sin, array, transpose, tan
-from numpy import arctan, arcsin, sqrt
+from numpy import arctan2, arcsin, sqrt, degrees, radians
 
 def C1(theta):
     """
@@ -199,8 +199,319 @@ def computeTAS(uvw, wind=[0,0,0]):
     w= uvw[2]
     
     TAS= sqrt(u**2+v**2+w**2)
-    alpha = arctan(w/u)
+    alpha = arctan2(w,u)
     beta = arcsin(v/TAS)
     
     return alpha, beta, TAS
     
+def trimmer(dynamic, HE, UE):
+    """
+    Trimmer for horizontal steady flight (cruize)
+
+    Parameters
+    ----------
+    dynamic : function
+        Function f(X,U) containing the dynamic and kinematics of the body.
+    HE : float
+        Altitude.
+    UE : float
+        aerodynamic speed.
+
+    Returns
+    -------
+    tuple
+        tuple containing the states and controls at trimmed condition.
+
+    """
+    from scipy.optimize import least_squares
+    
+    def obj(Z):
+        xe = 0.0
+        ye = 0.0
+        ze = -HE
+        ve = 0.0
+        we = Z[0]   
+        phie = 0.0
+        psie = 0.0
+        thetae = Z[1]
+        pe = 0.0
+        qe = 0.0
+        re = 0.0
+        
+        ue = sqrt(UE**2 - we**2 -ve**2 )
+    
+        delta_ae = 0.0
+        delta_re = 0.0
+        delta_pe = Z[2]
+        delta_ee = Z[3]
+    
+        Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+        Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+        
+        sol = dynamic(Xe, Ue)
+        Zp = array([sol[2], sol[3], sol[5], degrees(sol[10])])
+        return Zp
+    
+    wg = 5
+    thetag = radians(3)
+    delta_pg = 0.3
+    delta_eg = radians(-5)
+    Zg = array([wg , thetag, delta_pg, delta_eg])
+    
+    wlim = [-20,20]
+    thetalim = [radians(-20), radians(20)]
+    delta_p_lim = [0,1]
+    delta_e_lim = [radians(-30), radians(30)]
+    
+    boundary1 = (wlim[0], thetalim[0], delta_p_lim[0],delta_e_lim[0])
+    boundary2 = (wlim[1], thetalim[1], delta_p_lim[1],delta_e_lim[1])
+
+    root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
+    we = root.x[0]
+    thetae = root.x[1]
+    delta_ee = root.x[3]
+    delta_pe = root.x[2]
+    
+    xe = 0.0
+    ye = 0.0
+    ze = -HE
+    phie = 0.0
+    psie = 0.0
+    ve = 0.0
+    pe = 0.0
+    qe = 0.0
+    re = 0.0
+    delta_ae = 0.0
+    delta_re = 0.0
+    
+    ue = sqrt(UE**2 - we**2 -ve**2 )
+    
+    Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+    Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+    return (Xe, Ue)
+
+def trimmerClimb(dynamic, HE, UE, dH):
+    """
+    Trimmer for constant climb
+
+    Parameters
+    ----------
+    dynamic : function
+        Function f(X,U) containing the dynamic and kinematics of the body.
+    HE : float
+        Altitude.
+    UE : float
+        aerodynamic speed.
+
+    Returns
+    -------
+    tuple
+        tuple containing the states and controls at trimmed condition.
+
+    """
+    from scipy.optimize import least_squares
+    
+    def obj(Z):
+        xe = 0.0
+        ye = 0.0
+        ze = -HE
+        ve = 0.0
+        we = Z[0]   
+        phie = 0.0
+        psie = 0.0
+        thetae = Z[1]
+        pe = 0.0
+        qe = 0.0
+        re = 0.0
+        
+        ue = sqrt(UE**2 - we**2 -ve**2 )
+    
+        delta_ae = 0.0
+        delta_re = 0.0
+        delta_pe = Z[2]
+        delta_ee = Z[3]
+    
+        Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+        Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+        
+        sol = dynamic(Xe, Ue)
+        Zp = array([sol[2]+dH, sol[3], sol[5], degrees(sol[10])])
+        return Zp
+    
+    wg = 5
+    thetag = radians(3)
+    delta_pg = 0.3
+    delta_eg = radians(-5)
+    Zg = array([wg , thetag, delta_pg, delta_eg])
+    
+    wlim = [-20,20]
+    thetalim = [radians(-20), radians(20)]
+    delta_p_lim = [0,1]
+    delta_e_lim = [radians(-30), radians(30)]
+    
+    boundary1 = (wlim[0], thetalim[0], delta_p_lim[0],delta_e_lim[0])
+    boundary2 = (wlim[1], thetalim[1], delta_p_lim[1],delta_e_lim[1])
+
+    root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
+    we = root.x[0]
+    thetae = root.x[1]
+    delta_ee = root.x[3]
+    delta_pe = root.x[2]
+    
+    xe = 0.0
+    ye = 0.0
+    ze = -HE
+    phie = 0.0
+    psie = 0.0
+    ve = 0.0
+    pe = 0.0
+    qe = 0.0
+    re = 0.0
+    delta_ae = 0.0
+    delta_re = 0.0
+    
+    ue = sqrt(UE**2 - we**2 -ve**2 )
+    
+    Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+    Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+    return (Xe, Ue)
+
+    
+def printInfo(X, U, frame = 'body'):
+    """
+    Print states and control
+
+    Parameters
+    ----------
+    X : array
+        States.
+    U : array
+        controls.
+    frame : TYPE, optional
+        DESCRIPTION. The default is 'body'.
+
+    Returns
+    -------
+    None.
+
+    """
+    x = X[0]
+    y = X[1]
+    z = X[2]
+    
+    u = X[3]
+    v = X[4]
+    w = X[5]
+    
+    phi = X[6]
+    theta = X[7]
+    psi = X[8]
+    
+    p = X[9]
+    q = X[10]
+    r = X[11]
+    
+    #Controls
+    delta_p = U[0]
+    delta_e = U[1]
+    delta_a = U[2]
+    delta_r = U[3]
+    
+    alpha, beta, TAS = computeTAS([u,v,w])
+    if frame== 'aero':
+        print('--------------------------------')
+        print('------------ STATES ------------')
+        print('------------- AERO -------------')
+        print('--------------------------------')
+
+        print('V')
+        print(TAS)
+        print('-------------')
+        print('alpha')
+        print(degrees(alpha))
+        print('-------------')
+        print('beta')
+        print(degrees(beta))
+        print('-------------')
+        print('phi')
+        print(degrees(phi))
+        print('-------------')
+        print('theta')
+        print(degrees(theta))
+        print('-------------')
+        print('psi')
+        print(degrees(psi))
+        print('-------------')
+        print('p')
+        print(degrees(p))
+        print('-------------')
+        print('q')
+        print(degrees(q))
+        print('-------------')
+        print('r')
+        print(degrees(r))
+        print('-------------')
+        print('x0')
+        print(x)
+        print('-------------')
+        print('y0')
+        print(y)
+        print('-------------')
+        print('H')
+        print(-z)
+        
+    elif frame =='controls':
+        print('--------------------------------')
+        print('----------- CONTROLS -----------')
+        print('--------------------------------')
+        print('delta_p')
+        print(delta_p*100)
+        print('-------------')
+        print('delta_e')
+        print(degrees(delta_e))
+        print('-------------')
+        print('delta_a')
+        print(degrees(delta_a))
+        print('-------------')
+        print('delta_r')
+        print(degrees(delta_r))
+    else:
+        print('--------------------------------')
+        print('------------ STATES ------------')
+        print('------------- BODY -------------')
+        print('--------------------------------')
+        print('x')
+        print(x)
+        print('-------------')
+        print('y')
+        print(y)
+        print('-------------')
+        print('z')
+        print(z)
+        print('-------------')
+        print('u')
+        print(u)
+        print('-------------')
+        print('v')
+        print(v)
+        print('-------------')
+        print('w')
+        print(w)
+        print('-------------')
+        print('phi')
+        print(degrees(phi))
+        print('-------------')
+        print('theta')
+        print(degrees(theta))
+        print('-------------')
+        print('psi')
+        print(degrees(psi))
+        print('-------------')
+        print('p')
+        print(degrees(p))
+        print('-------------')
+        print('q')
+        print(degrees(q))
+        print('-------------')
+        print('r')
+        print(degrees(r))

@@ -7,7 +7,7 @@ This file contains most of tools that can be used by PyAAT.
 """
 
 from numpy import cos, sin, array, transpose, tan
-from numpy import arctan2, arcsin,sqrt
+from numpy import arctan, arcsin, sqrt
 
 def C1(theta):
     """
@@ -194,13 +194,13 @@ def computeTAS(uvw, wind=[0,0,0]):
         True air speed in m/s.
 
     """
-    u =uvw[0]
-    v=uvw[1]
-    w=uvw[2]
+    u= uvw[0]
+    v= uvw[1]
+    w= uvw[2]
     
     TAS= sqrt(u**2+v**2+w**2)
-    alpha = arctan2(w,u)
-    beta = arcsin(u/TAS)
+    alpha = arctan(w/u)
+    beta = arcsin(v/TAS)
     
-    return alpha,beta,TAS
+    return alpha, beta, TAS
     

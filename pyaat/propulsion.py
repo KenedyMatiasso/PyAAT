@@ -16,10 +16,10 @@ class SimpleModel(object):
         
         # States
         self.TAS = 0.0
-        self.rho = RHO_SEA
+        self._rho = RHO_SEA
         
         # parameters
-        self.Fmaxi = 70.e3
+        self.Fmaxi = 70e3
         self.nrho = 0.775
         self.rhoi = 0.41271
         self.nv = 0
@@ -29,7 +29,7 @@ class SimpleModel(object):
         
     @property
     def Forces(self):
-        Fx = self.delta_p*self.Fmaxi*(self.rho/self.rhoi)**(self.nrho)*(self.TAS/self.Vi)**self.nv
+        Fx = self.delta_p*self.Fmaxi*(self._rho/self.rhoi)**(self.nrho)
         return array([Fx, 0.0, 0.0])
     
     @property

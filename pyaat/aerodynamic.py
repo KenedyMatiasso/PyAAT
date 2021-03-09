@@ -33,7 +33,7 @@ class Aircraft(object):
         self.Cm0= 0.0622
         self.Cn0 = 0.0
         
-        self.CLa= 6.29        
+        self.CLa= 6.29
         self.CDa= 0.2010
         self.Cma= -3.63
         
@@ -89,32 +89,32 @@ class Aircraft(object):
                
     @property
     def CL(self):
-        return self.CL0 + self.CLa*self.alpha + self.Cbarw/self.Vinf*(self.CLq*self.q + self.alpha_d*self.CLad) + self.CLde*self.delta_e
+        return self.CL0 + self.CLa*self.alpha + self.Cbarw/(self.Vinf)*(self.CLq*self.q + self.alpha_d*self.CLad) + self.CLde*self.delta_e
     
     @property 
     def CD(self):
-        return self.CD0 + self.CDa*self.alpha + self.Cbarw/self.Vinf*(self.CDq*self.q + self.CDad*self.alpha_d) + self.CDde*self.delta_e  
+        return self.CD0 + self.CDa*self.alpha + self.Cbarw/(self.Vinf)*(self.CDq*self.q + self.CDad*self.alpha_d) + self.CDde*self.delta_e  
     
     @property 
     def CY(self):
-        return self.CY0 + self.CYb*self.beta + self.bw/self.Vinf*(self.CYp*self.p + self.CYr*self.r + self.CYbd*self.beta_d) + self.CYda*self.delta_a + self.CYdr*self.delta_r
+        return self.CY0 + self.CYb*self.beta + self.bw/(self.Vinf)*(self.CYp*self.p + self.CYr*self.r + self.CYbd*self.beta_d) + self.CYda*self.delta_a + self.CYdr*self.delta_r
     
     @property
     def Cm(self):
-        return self.Cm0 + self.Cma*self.alpha + self.Cbarw/self.Vinf*(self.Cmq*self.q + self.Cmad*self.alpha_d) + self.Cmde*self.delta_e
+        return self.Cm0 + self.Cma*self.alpha + self.Cbarw/(self.Vinf)*(self.Cmq*self.q + self.Cmad*self.alpha_d) + self.Cmde*self.delta_e
     
     @property
     def Cl(self):
-        return self.Cl0 + self.Clb*self.beta + self.bw/self.Vinf*(self.Clp*self.p + self.Clr*self.r + self.Clbd*self.beta_d) + self.Clda*self.delta_a + self.Cldr*self.delta_r
+        return self.Cl0 + self.Clb*self.beta + self.bw/(self.Vinf)*(self.Clp*self.p + self.Clr*self.r + self.Clbd*self.beta_d) + self.Clda*self.delta_a + self.Cldr*self.delta_r
     
     @property
     def Cn(self):
-        return self.Cn0 + self.Cnb*self.beta + self.bw/self.Vinf*(self.Cnp*self.p + self.Cnr*self.r + self.Cnbd*self.beta_d) + self.Cnda*self.delta_a + self.Cndr*self.delta_r
+        return self.Cn0 + self.Cnb*self.beta + self.bw/(self.Vinf)*(self.Cnp*self.p + self.Cnr*self.r + self.Cnbd*self.beta_d) + self.Cnda*self.delta_a + self.Cndr*self.delta_r
     
     @property
     def Forces(self):
         return self.qdyn*self.Sw*array([-self.CD, -self.CY, -self.CL])
     
     @property
-    def Forces(self):
+    def Moments(self):
         return self.qdyn*self.Sw*array([self.bw, self.Cbarw, self.bw])*array([self.Cl, self.Cm, self.Cn])

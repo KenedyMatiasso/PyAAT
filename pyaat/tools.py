@@ -7,7 +7,7 @@ This file contains most of tools that can be used by PyAAT.
 """
 
 from numpy import cos, sin, array, transpose, tan
-from numpy import arctan2, arcsin, sqrt, degrees, radians
+from numpy import arctan2, arcsin, sqrt, degrees, radians, zeros, copy
 
 def C1(theta):
     """
@@ -229,60 +229,70 @@ def trimmer(dynamic, HE, UE):
         xe = 0.0
         ye = 0.0
         ze = -HE
-        ve = 0.0
-        we = Z[0]   
+        we = Z[0]  
+        ve = Z[1]
+        ue = sqrt(UE**2 - we**2 -ve**2 )
         phie = 0.0
         psie = 0.0
-        thetae = Z[1]
-        pe = 0.0
-        qe = 0.0
-        re = 0.0
+        thetae = Z[2]
+        pe = Z[3]
+        qe = Z[4]
+        re = Z[5]
+    
+        delta_pe = Z[6]
+        delta_ee = Z[7]
+        delta_ae = Z[8]
+        delta_re = Z[9]
         
-        ue = sqrt(UE**2 - we**2 -ve**2 )
-    
-        delta_ae = 0.0
-        delta_re = 0.0
-        delta_pe = Z[2]
-        delta_ee = Z[3]
-    
         Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
         Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
         
         sol = dynamic(Xe, Ue)
-        Zp = array([sol[2], sol[3], sol[5], degrees(sol[10])])
+        Zp = array([sol[2], sol[3], sol[4], sol[5], degrees(sol[6]),degrees(sol[7]), degrees(sol[8]), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
         return Zp
     
-    wg = 5
-    thetag = radians(3)
-    delta_pg = 0.3
-    delta_eg = radians(-5)
-    Zg = array([wg , thetag, delta_pg, delta_eg])
+    wg = 0.0
+    vg = 0.0
+    thetag = radians(0)
+    pg = 0.0
+    qg = 0.0
+    rg = 0.0
+    delta_pg = 0.5
+    delta_eg = radians(0.)
+    delta_ag = 0.0
+    delta_rg = 0.0
+    Zg = array([wg, vg, thetag, pg, qg, rg, delta_pg, delta_eg, delta_ag, delta_rg])
     
-    wlim = [-20,20]
+    wlim = [-20, 20]
+    vlim = [-50, 50]
     thetalim = [radians(-20), radians(20)]
+    plim = [radians(-20), radians(20)]
+    qlim = [radians(-20), radians(20)]
+    rlim = [radians(-20), radians(20)]
     delta_p_lim = [0,1]
-    delta_e_lim = [radians(-30), radians(30)]
+    delta_e_lim = [radians(-40), radians(40)]
+    delta_a_lim = [radians(-40), radians(40)]
+    delta_r_lim = [radians(-40), radians(40)]
     
-    boundary1 = (wlim[0], thetalim[0], delta_p_lim[0],delta_e_lim[0])
-    boundary2 = (wlim[1], thetalim[1], delta_p_lim[1],delta_e_lim[1])
+    boundary1 = (wlim[0], vlim[0], thetalim[0], plim[0], qlim[0], rlim[0], delta_p_lim[0],delta_e_lim[0], delta_a_lim[0], delta_r_lim[0])
+    boundary2 = (wlim[1], vlim[1], thetalim[1], plim[1], qlim[1], rlim[1], delta_p_lim[1],delta_e_lim[1], delta_a_lim[1], delta_r_lim[1])
 
     root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
     we = root.x[0]
-    thetae = root.x[1]
-    delta_ee = root.x[3]
-    delta_pe = root.x[2]
-    
+    ve = root.x[1]
+    thetae = root.x[2]
+    pe = root.x[3]
+    qe = root.x[4]
+    re = root.x[5]
+    delta_pe = root.x[6]
+    delta_ee = root.x[7]
+    delta_ae = root.x[8]
+    delta_re = root.x[9]
     xe = 0.0
     ye = 0.0
     ze = -HE
     phie = 0.0
     psie = 0.0
-    ve = 0.0
-    pe = 0.0
-    qe = 0.0
-    re = 0.0
-    delta_ae = 0.0
-    delta_re = 0.0
     
     ue = sqrt(UE**2 - we**2 -ve**2 )
     
@@ -315,60 +325,70 @@ def trimmerClimb(dynamic, HE, UE, dH):
         xe = 0.0
         ye = 0.0
         ze = -HE
-        ve = 0.0
-        we = Z[0]   
+        we = Z[0]  
+        ve = Z[1]
+        ue = sqrt(UE**2 - we**2 -ve**2 )
         phie = 0.0
         psie = 0.0
-        thetae = Z[1]
-        pe = 0.0
-        qe = 0.0
-        re = 0.0
+        thetae = Z[2]
+        pe = Z[3]
+        qe = Z[4]
+        re = Z[5]
+    
+        delta_pe = Z[6]
+        delta_ee = Z[7]
+        delta_ae = Z[8]
+        delta_re = Z[9]
         
-        ue = sqrt(UE**2 - we**2 -ve**2 )
-    
-        delta_ae = 0.0
-        delta_re = 0.0
-        delta_pe = Z[2]
-        delta_ee = Z[3]
-    
         Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
         Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
         
         sol = dynamic(Xe, Ue)
-        Zp = array([sol[2]+dH, sol[3], sol[5], degrees(sol[10])])
+        Zp = array([sol[2]+dH, sol[3], sol[4], sol[5], degrees(sol[6]),degrees(sol[7]), degrees(sol[8]), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
         return Zp
     
-    wg = 5
-    thetag = radians(3)
-    delta_pg = 0.3
-    delta_eg = radians(-5)
-    Zg = array([wg , thetag, delta_pg, delta_eg])
+    wg = 0.0
+    vg = 0.0
+    thetag = radians(0)
+    pg = 0.0
+    qg = 0.0
+    rg = 0.0
+    delta_pg = 0.5
+    delta_eg = radians(0.)
+    delta_ag = 0.0
+    delta_rg = 0.0
+    Zg = array([wg, vg, thetag, pg, qg, rg, delta_pg, delta_eg, delta_ag, delta_rg])
     
-    wlim = [-20,20]
+    wlim = [-20, 20]
+    vlim = [-50, 50]
     thetalim = [radians(-20), radians(20)]
+    plim = [radians(-20), radians(20)]
+    qlim = [radians(-20), radians(20)]
+    rlim = [radians(-20), radians(20)]
     delta_p_lim = [0,1]
-    delta_e_lim = [radians(-30), radians(30)]
+    delta_e_lim = [radians(-40), radians(40)]
+    delta_a_lim = [radians(-40), radians(40)]
+    delta_r_lim = [radians(-40), radians(40)]
     
-    boundary1 = (wlim[0], thetalim[0], delta_p_lim[0],delta_e_lim[0])
-    boundary2 = (wlim[1], thetalim[1], delta_p_lim[1],delta_e_lim[1])
+    boundary1 = (wlim[0], vlim[0], thetalim[0], plim[0], qlim[0], rlim[0], delta_p_lim[0],delta_e_lim[0], delta_a_lim[0], delta_r_lim[0])
+    boundary2 = (wlim[1], vlim[1], thetalim[1], plim[1], qlim[1], rlim[1], delta_p_lim[1],delta_e_lim[1], delta_a_lim[1], delta_r_lim[1])
 
     root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
     we = root.x[0]
-    thetae = root.x[1]
-    delta_ee = root.x[3]
-    delta_pe = root.x[2]
-    
+    ve = root.x[1]
+    thetae = root.x[2]
+    pe = root.x[3]
+    qe = root.x[4]
+    re = root.x[5]
+    delta_pe = root.x[6]
+    delta_ee = root.x[7]
+    delta_ae = root.x[8]
+    delta_re = root.x[9]
     xe = 0.0
     ye = 0.0
     ze = -HE
     phie = 0.0
     psie = 0.0
-    ve = 0.0
-    pe = 0.0
-    qe = 0.0
-    re = 0.0
-    delta_ae = 0.0
-    delta_re = 0.0
     
     ue = sqrt(UE**2 - we**2 -ve**2 )
     
@@ -376,7 +396,199 @@ def trimmerClimb(dynamic, HE, UE, dH):
     Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
     return (Xe, Ue)
 
+def trimmerPullUp(dynamic, HE, UE, dTH):
+    """
+    Trimmer for constant climb
+
+    Parameters
+    ----------
+    dynamic : function
+        Function f(X,U) containing the dynamic and kinematics of the body.
+    HE : float
+        Altitude.
+    UE : float
+        aerodynamic speed.
+
+    Returns
+    -------
+    tuple
+        tuple containing the states and controls at trimmed condition.
+
+    """
+    from scipy.optimize import least_squares
     
+    def obj(Z):
+        xe = 0.0
+        ye = 0.0
+        ze = -HE
+        we = Z[0]  
+        ve = Z[1]
+        ue = sqrt(UE**2 - we**2 -ve**2 )
+        phie = 0.0
+        psie = 0.0
+        thetae = Z[2]
+        pe = Z[3]
+        qe = Z[4]
+        re = Z[5]
+    
+        delta_pe = Z[6]
+        delta_ee = Z[7]
+        delta_ae = Z[8]
+        delta_re = Z[9]
+        
+        Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+        Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+        
+        sol = dynamic(Xe, Ue)
+        Zp = array([sol[2], sol[3], sol[4], sol[5], degrees(sol[6]),10*degrees(sol[7]-dTH), degrees(sol[8]), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
+        return Zp
+    
+    wg = 0.0
+    vg = 0.0
+    thetag = radians(0)
+    pg = 0.0
+    qg = dTH
+    rg = 0.0
+    delta_pg = 0.5
+    delta_eg = radians(0.)
+    delta_ag = 0.0
+    delta_rg = 0.0
+    Zg = array([wg, vg, thetag, pg, qg, rg, delta_pg, delta_eg, delta_ag, delta_rg])
+    
+    wlim = [-20, 20]
+    vlim = [-50, 50]
+    thetalim = [radians(-40), radians(40)]
+    plim = [radians(-40), radians(40)]
+    qlim = [radians(-40), radians(40)]
+    rlim = [radians(-40), radians(40)]
+    delta_p_lim = [0,1]
+    delta_e_lim = [radians(-40), radians(40)]
+    delta_a_lim = [radians(-40), radians(40)]
+    delta_r_lim = [radians(-40), radians(40)]
+    
+    boundary1 = (wlim[0], vlim[0], thetalim[0], plim[0], qlim[0], rlim[0], delta_p_lim[0],delta_e_lim[0], delta_a_lim[0], delta_r_lim[0])
+    boundary2 = (wlim[1], vlim[1], thetalim[1], plim[1], qlim[1], rlim[1], delta_p_lim[1],delta_e_lim[1], delta_a_lim[1], delta_r_lim[1])
+
+    root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
+    we = root.x[0]
+    ve = root.x[1]
+    thetae = root.x[2]
+    pe = root.x[3]
+    qe = root.x[4]
+    re = root.x[5]
+    delta_pe = root.x[6]
+    delta_ee = root.x[7]
+    delta_ae = root.x[8]
+    delta_re = root.x[9]
+    xe = 0.0
+    ye = 0.0
+    ze = -HE
+    phie = 0.0
+    psie = 0.0
+    
+    ue = sqrt(UE**2 - we**2 -ve**2 )
+    
+    Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+    Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+    return (Xe, Ue)
+
+def trimmerCurve(dynamic, HE, UE, dPS, BTA):
+    """
+    Trimmer for constant climb
+
+    Parameters
+    ----------
+    dynamic : function
+        Function f(X,U) containing the dynamic and kinematics of the body.
+    HE : float
+        Altitude.
+    UE : float
+        aerodynamic speed.
+
+    Returns
+    -------
+    tuple
+        tuple containing the states and controls at trimmed condition.
+
+    """
+    from scipy.optimize import least_squares
+    
+    def obj(Z):
+        xe = 0.0
+        ye = 0.0
+        ze = -HE
+        we = Z[0]  
+        ve = UE*sin(BTA)
+        ue = sqrt(UE**2 - we**2 -ve**2 )
+        phie = Z[1]
+        psie = 0.0
+        thetae = Z[2]
+        pe = Z[3]
+        qe = Z[4]
+        re = Z[5]
+    
+        delta_pe = Z[6]
+        delta_ee = Z[7]
+        delta_ae = Z[8]
+        delta_re = Z[9]
+        
+        Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+        Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+        
+        sol = dynamic(Xe, Ue)
+        Zp = array([sol[2], sol[3], sol[4], sol[5], degrees(sol[6]),degrees(sol[7]), degrees(sol[8]-dPS), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
+        return Zp
+    
+    wg = 0.0
+    vg = 0.0
+    thetag = radians(0)
+    pg = 0.0
+    qg = 0.0
+    rg = 0.0
+    delta_pg = 0.5
+    delta_eg = radians(0.)
+    delta_ag = 0.0
+    delta_rg = 0.0
+    Zg = array([wg, vg, thetag, pg, qg, rg, delta_pg, delta_eg, delta_ag, delta_rg])
+    
+    wlim = [-20, 20]
+    vlim = [-50, 50]
+    thetalim = [radians(-20), radians(20)]
+    plim = [radians(-20), radians(20)]
+    qlim = [radians(-20), radians(20)]
+    rlim = [radians(-20), radians(20)]
+    delta_p_lim = [0,1]
+    delta_e_lim = [radians(-40), radians(40)]
+    delta_a_lim = [radians(-40), radians(40)]
+    delta_r_lim = [radians(-40), radians(40)]
+    
+    boundary1 = (wlim[0], vlim[0], thetalim[0], plim[0], qlim[0], rlim[0], delta_p_lim[0],delta_e_lim[0], delta_a_lim[0], delta_r_lim[0])
+    boundary2 = (wlim[1], vlim[1], thetalim[1], plim[1], qlim[1], rlim[1], delta_p_lim[1],delta_e_lim[1], delta_a_lim[1], delta_r_lim[1])
+
+    root = least_squares(obj, Zg, bounds = (boundary1, boundary2))
+    we = root.x[0]
+    ve = UE*sin(BTA)
+    thetae = root.x[2]
+    pe = root.x[3]
+    qe = root.x[4]
+    re = root.x[5]
+    delta_pe = root.x[6]
+    delta_ee = root.x[7]
+    delta_ae = root.x[8]
+    delta_re = root.x[9]
+    xe = 0.0
+    ye = 0.0
+    ze = -HE
+    phie = root.x[1]
+    psie = 0.0
+    
+    ue = sqrt(UE**2 - we**2 -ve**2 )
+    
+    Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
+    Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
+    return (Xe, Ue)
+
+
 def printInfo(X, U, frame = 'body'):
     """
     Print states and control
@@ -519,8 +731,18 @@ def printInfo(X, U, frame = 'body'):
 def linearization(dynamics, Xe, Ue):
     dX = array([0.1, 0.01, 0.01, 0.01, radians(0.1), radians(0.1), radians(0.1), radians(0.1), radians(0.1), radians(0.1)])
     dU = array([0.01, radians(0.1), radians(0.1), radians(0.1)])
-    A = 0.0
+    A = zeros((10,10))
+    B = zeros((10,4))
     for i in range(0,len(dX)):
-        Xe[i+2] = Xe[i+2] + dX[i]
-    
-    return 0.0
+        Xm = copy(Xe)
+        Xm[i+2] = Xm[i+2] + dX[i]
+        
+        sol = dynamics(Xm,Ue)
+        A[:,i] = 1/dX[i]*sol[2:12]
+        
+    for i in range(0,len(dU)):
+        Um = copy(Ue)
+        Um[i] = Um[i] + dU[i]
+        sol= dynamics(Xe, Um)
+        B[:,i] = 1/dU[i]*sol[2:12]
+    return A, B

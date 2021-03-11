@@ -12,10 +12,12 @@ from gravity import NewtonGravity
 from airplane import airplane
 
 from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from tools import trimmer, printInfo, trimmerClimb
+from tools import trimmer, printInfo, trimmerClimb, linearization
+from tools import trimmerPullUp, trimmerCurve
 from post_processing import plotter
 
 from numpy import array, cross, arange, radians
+from numpy.linalg import eig
 from scipy.integrate import odeint
 
 def dynamics(X,U):
@@ -141,25 +143,31 @@ m = airplane._mass
 Inertia = airplane.inertia
 InvInertia = airplane.invInertia
 
-HE = 10000
-UE = 200
+HE = 5000
+UE = 150
 dH = 5
+dTH = radians(5)
+dPS = radians(6)
+BTA = radians(5)
 
 Xe, Ue = trimmer(dynamics,HE, UE)
-#Xe, Ue = trimmerClimb(dynamics,HE, UE, dH)
+#Xe, Ue = trimmerClimb(dynamics, HE, UE, dH)
+#Xe, Ue = trimmerPullUp(dynamics, HE, UE, dTH)
+#Xe, Ue = trimmerCurve(dynamics, HE, UE, dPS, BTA)
 
 
 sol = list(dynamics(Xe,Ue))
 printInfo(Xe,Ue, frame ='aero')
 printInfo(Xe,Ue, frame='controls')
 
-T0=0
-TF=180
-dt=0.01
+T0 = 0
+TF = 2800
+dt = 0.01
 time = arange(T0, TF, dt)
 
 Xe[5] = Xe[5] + 0.0
 Xe[4] = Xe[4] + 0.0
+Xe[3] = Xe[3] + 5.0
 
 Ue[1] = Ue[1] + radians(0)
 Ue[2] = Ue[2] + radians(0)
@@ -191,3 +199,9 @@ pltr.LinPos()
 pltr.Attitude()
 pltr.AngVel()
 pltr.Controls()
+pltr.LinPos3D()
+
+
+A, B = linearization(dynamics, Xe, Ue)
+
+w, v = eig(A)

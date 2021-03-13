@@ -6,7 +6,7 @@ Distributed under MIT License
 This file contains most of tools that can be used by PyAAT.
 """
 
-from numpy import cos, sin, array, transpose, tan
+from numpy import cos, sin, array, transpose, tan, around
 from numpy import arctan2, arcsin, sqrt, degrees, radians, zeros, copy
 
 import matplotlib.pylab as plt
@@ -112,15 +112,15 @@ class plotter(object):
             plt.figure()
             plt.subplot(311)
             plt.title("Linear Velocity")
-            plt.plot(self.time, self.TAS, color = 'red')
+            plt.plot(self.time, around(self.TAS, decimals=2), color = 'red')
             plt.ylabel('V [m/s]')
             plt.grid()
             plt.subplot(312)
-            plt.plot(self.time, degrees(self.alpha), color = 'red')
+            plt.plot(self.time, around(degrees(self.alpha), decimals=2), color = 'red')
             plt.ylabel(r'$\alpha$ [deg]')
             plt.grid()
             plt.subplot(313)
-            plt.plot(self.time,degrees(self.beta), color = 'red')
+            plt.plot(self.time, around(degrees(self.beta), decimals=2), color = 'red')
             plt.ylabel(r'$\beta$ [deg]')
             plt.grid()
             plt.show()
@@ -128,15 +128,15 @@ class plotter(object):
             plt.figure()
             plt.subplot(311)
             plt.title("Velocity")
-            plt.plot(self.time, self.u, color = 'red')
+            plt.plot(self.time, around(self.u, decimals=2), color = 'red')
             plt.ylabel('u [m/s]')
             plt.grid()
             plt.subplot(312)
-            plt.plot(self.time, self.v, color = 'red')
+            plt.plot(self.time, around(self.v, decimals=2), color = 'red')
             plt.ylabel('v [m/s]')
             plt.grid()
             plt.subplot(313)
-            plt.plot(self.time,self.w, color = 'red')
+            plt.plot(self.time, around(self.w, decimals=2), color = 'red')
             plt.ylabel('w [m/s]')
             plt.grid()
             plt.show()
@@ -145,15 +145,15 @@ class plotter(object):
         plt.figure()
         plt.subplot(311)
         plt.title("Linear position")
-        plt.plot(self.time, self.x, color = 'red')
+        plt.plot(self.time, around(self.x, decimals=2), color = 'red')
         plt.ylabel('x [m]')
         plt.grid()
         plt.subplot(312)
-        plt.plot(self.time, self.y, color = 'red')
+        plt.plot(self.time, around(self.y, decimals=2), color = 'red')
         plt.ylabel('y [m]')
         plt.grid()
         plt.subplot(313)
-        plt.plot(self.time,-self.z, color = 'red')
+        plt.plot(self.time,around(-self.z, decimals=2), color = 'red')
         plt.ylabel('H [m]')
         plt.grid()
         plt.show()
@@ -161,21 +161,21 @@ class plotter(object):
     def LinPos3D(self):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot3D(self.x, self.y, -self.z, 'red')
+        ax.plot3D(around(self.x, decimals=2), around(self.y, decimals=2), around(-self.z, decimals=2), 'red')
         
     def Attitude(self):
         plt.figure()
         plt.subplot(311)
         plt.title("Attitude")
-        plt.plot(self.time, degrees(self.phi), color = 'red')
+        plt.plot(self.time, around(degrees(self.phi), decimals=2), color = 'red')
         plt.ylabel('$\Phi$ [deg]')
         plt.grid()
         plt.subplot(312)
-        plt.plot(self.time, degrees(self.theta), color = 'red')
+        plt.plot(self.time, around(degrees(self.theta), decimals=2), color = 'red')
         plt.ylabel('$\Theta$ [deg]')
         plt.grid()
         plt.subplot(313)
-        plt.plot(self.time, degrees(self.psi), color = 'red')
+        plt.plot(self.time, around(degrees(self.psi), decimals=2), color = 'red')
         plt.ylabel('$\Psi$ [deg]')
         plt.grid()
         plt.show()
@@ -184,15 +184,15 @@ class plotter(object):
         plt.figure()
         plt.subplot(311)
         plt.title("Angular Speed")
-        plt.plot(self.time, degrees(self.p), color = 'red')
+        plt.plot(self.time, around(degrees(self.p), decimals=2), color = 'red')
         plt.ylabel('$p$ [deg/s]')
         plt.grid()
         plt.subplot(312)
-        plt.plot(self.time, degrees(self.q), color = 'red')
+        plt.plot(self.time, around(degrees(self.q), decimals=2), color = 'red')
         plt.ylabel('$q$ [deg/s]')
         plt.grid()
         plt.subplot(313)
-        plt.plot(self.time, degrees(self.r), color = 'red')
+        plt.plot(self.time, around(degrees(self.r), decimals=2), color = 'red')
         plt.ylabel('$r$ [deg/s]')
         plt.grid()
         plt.show()
@@ -201,19 +201,19 @@ class plotter(object):
         plt.figure()
         plt.subplot(411)
         plt.title("Controls")
-        plt.plot(self.time, self.delta_p, color = 'red')
+        plt.plot(self.time, around(self.delta_p, decimals=2), color = 'red')
         plt.ylabel('$\delta_p$ [%]')
         plt.grid()
         plt.subplot(412)
-        plt.plot(self.time, degrees(self.delta_e), color = 'red')
+        plt.plot(self.time, around(degrees(self.delta_e), decimals=2), color = 'red')
         plt.ylabel('$\delta_e$ [deg]')
         plt.grid()
         plt.subplot(413)
-        plt.plot(self.time, degrees(self.delta_a), color = 'red')
+        plt.plot(self.time, around(degrees(self.delta_a), decimals=2), color = 'red')
         plt.ylabel('$\delta_a$ [deg]')
         plt.grid()
         plt.subplot(414)
-        plt.plot(self.time, degrees(self.delta_r), color = 'red')
+        plt.plot(self.time, around(degrees(self.delta_r), decimals=2), color = 'red')
         plt.ylabel('$\delta_r$ [deg]')
         plt.grid()
         plt.show()
@@ -938,8 +938,8 @@ def printInfo(X, U, frame = 'body'):
         print(degrees(r))
 
 def linearization(dynamics, Xe, Ue):
-    dX = array([0.1, 0.01, 0.01, 0.01, radians(0.1), radians(0.1), radians(0.1), radians(0.1), radians(0.1), radians(0.1)])
-    dU = array([0.01, radians(0.1), radians(0.1), radians(0.1)])
+    dX = array([0.01, 0.001, 0.001, 0.001, radians(0.01), radians(0.01), radians(0.01), radians(0.01), radians(0.01), radians(0.01)])
+    dU = array([0.01, radians(0.01), radians(0.01), radians(0.01)])
     A = zeros((10,10))
     B = zeros((10,4))
     for i in range(0,len(dX)):
@@ -961,33 +961,33 @@ def modesMatrix(A,B):
     Af = zeros((10,10))
     Bf = zeros((10,4))
     
-    Ai[:,0] = A[:,1]
-    Ai[:,1] = A[:,3]
-    Ai[:,2] = A[:,5]
-    Ai[:,3] = A[:,8]
-    Ai[:,4] = A[:,0]
+    Ai[:,0] = A[:,0]
+    Ai[:,1] = A[:,1]
+    Ai[:,2] = A[:,3]
+    Ai[:,3] = A[:,5]
+    Ai[:,4] = A[:,8]
     Ai[:,5] = A[:,2]
     Ai[:,6] = A[:,4]
     Ai[:,7] = A[:,6]
     Ai[:,8] = A[:,7]
     Ai[:,9] = A[:,9]
     
-    Af[0] = Ai[1]
-    Af[1] = Ai[3]
-    Af[2] = Ai[5]
-    Af[3] = Ai[8]
-    Af[4] = Ai[0]
+    Af[0] = Ai[0]
+    Af[1] = Ai[1]
+    Af[2] = Ai[3]
+    Af[3] = Ai[5]
+    Af[4] = Ai[8]
     Af[5] = Ai[2]
     Af[6] = Ai[4]
     Af[7] = Ai[6]
     Af[8] = Ai[7]
     Af[9] = Ai[9]
 
-    Bf[0] = B[1]
-    Bf[1] = B[3]
-    Bf[2] = B[5]
-    Bf[3] = B[8]
-    Bf[4] = B[0]
+    Bf[0] = B[0]
+    Bf[1] = B[1]
+    Bf[2] = B[3]
+    Bf[3] = B[5]
+    Bf[4] = B[8]
     Bf[5] = B[2]
     Bf[6] = B[4]
     Bf[7] = B[6]

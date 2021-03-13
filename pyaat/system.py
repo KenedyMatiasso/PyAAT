@@ -5,12 +5,9 @@ Distributed under MIT License
 
 This is the system file of PyAAT.
 """
-
-#from airplane import airplane
-
 from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
 from tools import trimmer, trimmerClimb, linearization
-from tools import trimmerPullUp, trimmerCurve, lateroMatrix
+from tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
 from tools import longMatrix
 
 from numpy import array, cross, arange, radians
@@ -182,11 +179,15 @@ class system(object):
     def Linearize(self, Xe, Ue):
         return linearization(self.dynamics, Xe, Ue)
     
-    def LinearizeLatero(self, Xe, Ue):
+    def LinearModes(self, Xe, Ue):
+        A, B = linearization(self.dynamics, Xe, Ue)
+        return modesMatrix(A, B)
+    
+    def LinearLatero(self, Xe, Ue):
         A, B = linearization(self.dynamics, Xe, Ue)
         return lateroMatrix(A, B)
     
-    def linearizeLong(self, Xe, Ue):
+    def LinearLong(self, Xe, Ue):
         A, B = linearization(self.dynamics, Xe, Ue)
         return longMatrix(A, B)
 

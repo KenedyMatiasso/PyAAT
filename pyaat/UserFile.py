@@ -15,6 +15,10 @@ from system import system
 from tools import printInfo
 from tools import plotter
 
+from numpy.linalg import eig
+
+#from numpy import radians, tan
+
 
 atm = atmosISA()
 prop = SimpleModel()
@@ -23,12 +27,15 @@ grav = NewtonGravity()
 
 Mysys = system(atmosphere =atm, propulsion = prop, aircraft = airc, gravity=grav)
 
-Xe, Ue = Mysys.trimmer(condition='curve', HE =5000., VE = 150, dPS = 2, BTA =2)
+Xe, Ue = Mysys.trimmer(condition='cruize', HE =9000., VE = 200, dPS = 2, BTA =2)
+
+#Xe[5] = Xe[5] + Xe[3]*tan(radians(5))
+
 
 printInfo(Xe,Ue, frame ='aero')
 printInfo(Xe,Ue, frame='controls')
 
-solution, control = Mysys.propagate(Xe, Ue, TF =100)
+solution, control = Mysys.propagate(Xe, Ue, TF =10)
 
 pltr = plotter()
 pltr.states = solution
@@ -42,6 +49,14 @@ pltr.Attitude()
 pltr.AngVel()
 pltr.Controls()
 pltr.LinPos3D()
+
+A, B = Mysys.LinearModes(Xe, Ue)
+Ald, Bld = Mysys.LinearLatero(Xe,Ue)
+Al, Bl =Mysys.LinearLong(Xe,Ue)
+wld, vld = eig(Ald)
+wl, vl = eig(Al)
+print('--------------------------------')
+print('Eigenvalues')
 
 '''
 #sol = list(dynamics(Xe,Ue))

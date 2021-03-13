@@ -37,7 +37,7 @@ class Aircraft(object):
         self.CDa= 0.2010
         self.Cma= -3.63
         
-        self.CYb= -0.785
+        self.CYb= 0.785
         self.Clb= -0.121
         self.Cnb= 0.174
         

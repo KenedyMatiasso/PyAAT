@@ -7,6 +7,7 @@ Aerodynamic model for a convencional aicraft
 """
 from numpy import array
 from constants import RHO_SEA
+from numpy.linalg import inv
 
 class Aircraft(object):
     def __init__(self):
@@ -25,14 +26,13 @@ class Aircraft(object):
         self.delta_a= 0.0
         self.delta_r= 0.0
         
-        # Aerodynamic coeficiients
+        # Aerodynamic coeficients
         self.CL0= 0.382
         self.CD0= 0.0252
         self.CY0= 0.0
         self.Cl0= 0.0
         self.Cm0= 0.0622
         self.Cn0 = 0.0
-        
         self.CLa= 6.29
         self.CDa= 0.2010
         self.Cma= -3.63
@@ -82,6 +82,19 @@ class Aircraft(object):
         # Environment
         self._rho= RHO_SEA
         self.Vinf = 224.6
+        
+        self._mass = 45e3
+        self.Ixx = 0.554e6
+        self.Iyy = 2.53e6
+        self.Izz = 3.01e6
+        self.Ixz = 0.106e6
+        self.Izy = 0.0
+        self.Iyx = 0.0
+        self.inertia = array([[self.Ixx, -self.Iyx, -self.Ixz],
+                              [-self.Iyx, self.Iyy, -self.Izy],
+                              [-self.Ixz, -self.Izy, self.Izz]])
+        
+        self.invInertia = inv(self.inertia)
         
     @property
     def qdyn(self):

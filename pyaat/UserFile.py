@@ -27,15 +27,13 @@ grav = NewtonGravity()
 
 Mysys = system(atmosphere =atm, propulsion = prop, aircraft = airc, gravity=grav)
 
-Xe, Ue = Mysys.trimmer(condition='cruize', HE =9000., VE = 200, dPS = 2, BTA =2)
-
-#Xe[5] = Xe[5] + Xe[3]*tan(radians(5))
+Xe, Ue = Mysys.trimmer(condition='cruize', HE =5000., VE= 150, dPS= 2, BTA =2, dTH = 10.,dH =5.)
 
 
 printInfo(Xe,Ue, frame ='aero')
 printInfo(Xe,Ue, frame='controls')
 
-solution, control = Mysys.propagate(Xe, Ue, TF =10)
+solution, control = Mysys.propagate(Xe, Ue, TF =100, perturbation=True, state={'alpha': 5, 'beta':2})
 
 pltr = plotter()
 pltr.states = solution
@@ -49,42 +47,14 @@ pltr.Attitude()
 pltr.AngVel()
 pltr.Controls()
 pltr.LinPos3D()
+pltr.linPos2D()
 
 A, B = Mysys.LinearModes(Xe, Ue)
 Ald, Bld = Mysys.LinearLatero(Xe,Ue)
 Al, Bl =Mysys.LinearLong(Xe,Ue)
 wld, vld = eig(Ald)
 wl, vl = eig(Al)
+
 print('--------------------------------')
 print('Eigenvalues')
-
-'''
-#sol = list(dynamics(Xe,Ue))
-
-
-
-
-Xe[5] = Xe[5] + 0.0
-Xe[4] = Xe[4] + 0.0
-Xe[3] = Xe[3] + 0.0
-
-Ue[1] = Ue[1] + radians(0)
-Ue[2] = Ue[2] + radians(0)
-
-solution = odeint(simularaviao, Xe, time)
-
-
-
-
-
-
-
-
-
-A, B = linearization(dynamics, Xe, Ue)
-Af, Bf = modesMatrix(A,B)
-An, Bn = lateroMatrix(A,B)
-Al, Bl = longMatrix(A, B)
-#w, v = eig(A)
-
-'''
+print(wl)

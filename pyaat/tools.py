@@ -112,15 +112,15 @@ class plotter(object):
             plt.figure()
             plt.subplot(311)
             plt.title("Linear Velocity")
-            plt.plot(self.time, around(self.TAS, decimals=2), color = 'red')
+            plt.plot(self.time, around(self.TAS, decimals=4), color = 'red')
             plt.ylabel('V [m/s]')
             plt.grid()
             plt.subplot(312)
-            plt.plot(self.time, around(degrees(self.alpha), decimals=2), color = 'red')
+            plt.plot(self.time, around(degrees(self.alpha), decimals=4), color = 'red')
             plt.ylabel(r'$\alpha$ [deg]')
             plt.grid()
             plt.subplot(313)
-            plt.plot(self.time, around(degrees(self.beta), decimals=2), color = 'red')
+            plt.plot(self.time, around(degrees(self.beta), decimals=4), color = 'red')
             plt.ylabel(r'$\beta$ [deg]')
             plt.grid()
             plt.show()
@@ -128,15 +128,15 @@ class plotter(object):
             plt.figure()
             plt.subplot(311)
             plt.title("Velocity")
-            plt.plot(self.time, around(self.u, decimals=2), color = 'red')
+            plt.plot(self.time, around(self.u, decimals=4), color = 'red')
             plt.ylabel('u [m/s]')
             plt.grid()
             plt.subplot(312)
-            plt.plot(self.time, around(self.v, decimals=2), color = 'red')
+            plt.plot(self.time, around(self.v, decimals=4), color = 'red')
             plt.ylabel('v [m/s]')
             plt.grid()
             plt.subplot(313)
-            plt.plot(self.time, around(self.w, decimals=2), color = 'red')
+            plt.plot(self.time, around(self.w, decimals=4), color = 'red')
             plt.ylabel('w [m/s]')
             plt.grid()
             plt.show()
@@ -145,15 +145,15 @@ class plotter(object):
         plt.figure()
         plt.subplot(311)
         plt.title("Linear position")
-        plt.plot(self.time, around(self.x, decimals=2), color = 'red')
+        plt.plot(self.time, around(self.x, decimals=4), color = 'red')
         plt.ylabel('x [m]')
         plt.grid()
         plt.subplot(312)
-        plt.plot(self.time, around(self.y, decimals=2), color = 'red')
+        plt.plot(self.time, around(self.y, decimals=4), color = 'red')
         plt.ylabel('y [m]')
         plt.grid()
         plt.subplot(313)
-        plt.plot(self.time,around(-self.z, decimals=2), color = 'red')
+        plt.plot(self.time,around(-self.z, decimals=4), color = 'red')
         plt.ylabel('H [m]')
         plt.grid()
         plt.show()
@@ -161,22 +161,35 @@ class plotter(object):
     def LinPos3D(self):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot3D(around(self.x, decimals=2), around(self.y, decimals=2), around(-self.z, decimals=2), 'red')
+        ax.plot3D(around(self.x, decimals=4), around(self.y, decimals=4), around(-self.z, decimals=4), 'red')
         
     def Attitude(self):
         plt.figure()
         plt.subplot(311)
         plt.title("Attitude")
-        plt.plot(self.time, around(degrees(self.phi), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.phi), decimals=4), color = 'red')
         plt.ylabel('$\Phi$ [deg]')
         plt.grid()
         plt.subplot(312)
-        plt.plot(self.time, around(degrees(self.theta), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.theta), decimals=4), color = 'red')
         plt.ylabel('$\Theta$ [deg]')
         plt.grid()
         plt.subplot(313)
-        plt.plot(self.time, around(degrees(self.psi), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.psi), decimals=4), color = 'red')
         plt.ylabel('$\Psi$ [deg]')
+        plt.grid()
+        plt.show()
+        
+    def linPos2D(self):
+        plt.figure()
+        plt.subplot(211)
+        plt.title("Attitude")
+        plt.plot(around(self.x, decimals=4), around(self.y, decimals=4), color = 'red')
+        plt.ylabel('Y position]')
+        plt.grid()
+        plt.subplot(212)
+        plt.plot(around(self.x, decimals=4), around(-self.z, decimals=4), color = 'red')
+        plt.ylabel('X position')
         plt.grid()
         plt.show()
         
@@ -184,15 +197,15 @@ class plotter(object):
         plt.figure()
         plt.subplot(311)
         plt.title("Angular Speed")
-        plt.plot(self.time, around(degrees(self.p), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.p), decimals=4), color = 'red')
         plt.ylabel('$p$ [deg/s]')
         plt.grid()
         plt.subplot(312)
-        plt.plot(self.time, around(degrees(self.q), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.q), decimals=4), color = 'red')
         plt.ylabel('$q$ [deg/s]')
         plt.grid()
         plt.subplot(313)
-        plt.plot(self.time, around(degrees(self.r), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.r), decimals=4), color = 'red')
         plt.ylabel('$r$ [deg/s]')
         plt.grid()
         plt.show()
@@ -201,19 +214,19 @@ class plotter(object):
         plt.figure()
         plt.subplot(411)
         plt.title("Controls")
-        plt.plot(self.time, around(self.delta_p, decimals=2), color = 'red')
+        plt.plot(self.time, around(self.delta_p, decimals=4), color = 'red')
         plt.ylabel('$\delta_p$ [%]')
         plt.grid()
         plt.subplot(412)
-        plt.plot(self.time, around(degrees(self.delta_e), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.delta_e), decimals=4), color = 'red')
         plt.ylabel('$\delta_e$ [deg]')
         plt.grid()
         plt.subplot(413)
-        plt.plot(self.time, around(degrees(self.delta_a), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.delta_a), decimals=4), color = 'red')
         plt.ylabel('$\delta_a$ [deg]')
         plt.grid()
         plt.subplot(414)
-        plt.plot(self.time, around(degrees(self.delta_r), decimals=2), color = 'red')
+        plt.plot(self.time, around(degrees(self.delta_r), decimals=4), color = 'red')
         plt.ylabel('$\delta_r$ [deg]')
         plt.grid()
         plt.show()
@@ -456,7 +469,7 @@ def trimmer(dynamic, HE, UE):
         Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
         Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
         
-        sol = dynamic(Xe, Ue)
+        sol = dynamic(0, Xe, Ue)
         Zp = array([sol[2], sol[3], sol[4], sol[5], degrees(sol[6]),degrees(sol[7]), degrees(sol[8]), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
         return Zp
     
@@ -552,7 +565,7 @@ def trimmerClimb(dynamic, HE, UE, dH):
         Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
         Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
         
-        sol = dynamic(Xe, Ue)
+        sol = dynamic(0, Xe, Ue)
         Zp = array([sol[2]+dH, sol[3], sol[4], sol[5], degrees(sol[6]),degrees(sol[7]), degrees(sol[8]), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
         return Zp
     
@@ -648,7 +661,7 @@ def trimmerPullUp(dynamic, HE, UE, dTH):
         Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
         Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
         
-        sol = dynamic(Xe, Ue)
+        sol = dynamic(0, Xe, Ue)
         Zp = array([sol[2], sol[3], sol[4], sol[5], degrees(sol[6]),10*degrees(sol[7]-dTH), degrees(sol[8]), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
         return Zp
     
@@ -744,7 +757,7 @@ def trimmerCurve(dynamic, HE, UE, dPS, BTA):
         Xe = array([xe, ye, ze, ue, ve, we, phie, thetae, psie, pe, qe, re])
         Ue = array([delta_pe, delta_ee, delta_ae, delta_re])
         
-        sol = dynamic(Xe, Ue)
+        sol = dynamic(0, Xe, Ue)
         Zp = array([sol[2], sol[3], sol[4], sol[5], degrees(sol[6]),degrees(sol[7]), degrees(sol[8]-dPS), degrees(sol[9]), degrees(sol[10]), degrees(sol[11])])
         return Zp
     
@@ -946,13 +959,13 @@ def linearization(dynamics, Xe, Ue):
         Xm = copy(Xe)
         Xm[i+2] = Xm[i+2] + dX[i]
         
-        sol = dynamics(Xm,Ue)
+        sol = dynamics(0, Xm,Ue)
         A[:,i] = 1/dX[i]*sol[2:12]
         
     for i in range(0,len(dU)):
         Um = copy(Ue)
         Um[i] = Um[i] + dU[i]
-        sol= dynamics(Xe, Um)
+        sol= dynamics(0, Xe, Um)
         B[:,i] = 1/dU[i]*sol[2:12]
     return A, B
 

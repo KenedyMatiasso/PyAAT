@@ -10,7 +10,7 @@ from tools import trimmer, trimmerClimb, linearization
 from tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
 from tools import longMatrix
 
-from numpy import array, cross, arange, radians
+from numpy import array, cross, arange, radians, tan, sqrt, sin
 from scipy.integrate import odeint
 
 
@@ -24,7 +24,7 @@ class system(object):
         self.Ue = None
         self.time = None
         
-    def dynamics(self, X, U):
+    def dynamics(self, t, X, U):
         # State space
         z = X[2]
         
@@ -135,10 +135,10 @@ class system(object):
         return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
     
     def simularaviao(self, X, t):
-        Xp = self.dynamics(X, self.Ue)
+        Xp = self.dynamics(t, X, self.Ue)
         return Xp
     
-    def trimmer(self, condition = 'cruize', HE = 5000.0, VE =150.0, dH = 0.0, dTH = 0., dPS = 0., BTA = 0.0):
+    def trimmer(self, condition = 'cruize', HE = 5000.0, VE =150.0, dH = 0.0, dTH = 5., dPS = 2., BTA = 0.0):
         BTA = radians(BTA)
         dTH = radians(dTH)
         dPS = radians(dPS)
@@ -154,11 +154,61 @@ class system(object):
         elif condition == 'curve':
             return trimmerCurve(self.dynamics, HE, VE, dPS, BTA)
     
-    def propagate(self, Xe, Ue, T0 = 0.0, TF=10.0, dt = 0.01):
-        self.Ue = Ue
-        self.Xe = Xe
+    def propagate(self, Xe, Ue, T0 = 0.0, TF=10.0, dt = 0.01, perturbation = False, state = {'beta':0., 'alpha':0.}):
+        if perturbation == False:
+            self.Ue = Ue
+
+        elif perturbation ==True:
+            for value in state:
+                if value == 'x':
+                    Xe[0] = Xe[0] + state['x']
+                    
+                if value == 'y':
+                    Xe[1] = Xe[1] + state['y']
+                    
+                if value == 'z':
+                    Xe[2] = Xe[2] + state['z']
+                    
+                if value == 'altitude':
+                    Xe[2] = Xe[2] - state['altitude']
+                
+                if value == 'u':
+                    Xe[3] = Xe[3] + state['u']
+                    
+                if value == 'v':
+                    Xe[4] = Xe[4] + state['v']
+                    
+                if value == 'w':
+                    Xe[5] = Xe[5] + state['w']
+                    
+                if value == 'phi':
+                    Xe[6] = Xe[6] + radians(state['phi'])
+                    
+                if value == 'theta':
+                    Xe[7] = Xe[7] + radians(state['theta'])
+                    
+                if value == 'psi':
+                    Xe[8] = Xe[8] + radians(state['psi'])
+                    
+                if value == 'p':
+                    Xe[9] = Xe[9] + radians(state['p'])
+                    
+                if value == 'q':
+                    Xe[10] = Xe[10] + radians(state['q'])
+                    
+                if value == 'r':
+                    Xe[11] = Xe[11] + radians(state['r'])                  
+                
+                if value == 'alpha':
+                    Xe[5] = Xe[5] + Xe[3]*tan(radians(state['alpha']))
+                    
+                if value == 'beta':
+                    V = sqrt(Xe[3]**2 + Xe[4]**2+ Xe[5]**2)
+                    Xe[4] = Xe[4] + V*sin(radians(state['beta']))
+            self.Ue = Ue
+            
         self.time = arange(T0, TF, dt)
-        solution = odeint(self.simularaviao, self.Xe, self.time)
+        solution = odeint(self.simularaviao, Xe, self.time)
         
         # Create control vector (plot purpuses only)
         dp = []

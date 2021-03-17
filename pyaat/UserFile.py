@@ -33,7 +33,7 @@ Xe, Ue = Mysys.trimmer(condition='cruize', HE =5000., VE= 150, dPS= 2, BTA =2, d
 printInfo(Xe,Ue, frame ='aero')
 printInfo(Xe,Ue, frame='controls')
 
-solution, control = Mysys.propagate(Xe, Ue, TF =100, perturbation=True, state={'alpha': 5, 'beta':2})
+solution, control = Mysys.propagate(Xe, Ue, TF =100, perturbation=False, state={'alpha': 5, 'beta':2})
 
 pltr = plotter()
 pltr.states = solution

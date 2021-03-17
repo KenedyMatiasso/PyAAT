@@ -8,6 +8,7 @@ This file contains most of tools that can be used by PyAAT.
 
 from numpy import cos, sin, array, transpose, tan, around
 from numpy import arctan2, arcsin, sqrt, degrees, radians, zeros, copy
+from numpy import trace, absolute
 
 import matplotlib.pylab as plt
 import matplotlib
@@ -1023,3 +1024,20 @@ def longMatrix(A,B):
     Al = Am[:5,:5]
     Bl = Bm[:,:2]
     return Al, Bl
+
+def quaternion2DCM(quaternion):
+    qs = quaternion[0]
+    qx = quaternion[1]
+    qy = quaternion[2]
+    qz = quaternion[3]
+    
+    return array([[qs**2 + qx**2 - qy**2 - qz**2, 2*(qx*qy - qz*qs), 2*(qx*qz + qy*qs)],
+               [2*(qx*qy + qz*qs), qs**2 - qx**2 + qy**2 - qz**2, 2*(qy*qz - qx*qs)],
+               [2*(qx*qz - qy*qs), 2*(qy*qz + qx*qs), qs**2 - qx**2 - qy**2 + qz**2]])
+
+def DCM2quaternion(DCM):
+    qs = absolute(1/2*sqrt(DCM[0,0] + DCM[1,1] + DCM[2,2] + 1))
+    qx = (DCM[1,2] - DCM[2,1])/(4*qs)
+    qy = (DCM[2,0] - DCM[0,2])/(4*qs)
+    qz = (DCM[0,1] - DCM[1,0])/(4*qs)
+    return array([qs, qx, qy,qz])    

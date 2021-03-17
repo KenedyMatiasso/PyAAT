@@ -8,9 +8,9 @@ This is the system file of PyAAT.
 from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
 from tools import trimmer, trimmerClimb, linearization
 from tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
-from tools import longMatrix
+from tools import longMatrix, body2aero
 
-from numpy import array, cross, arange, radians, tan, sqrt, sin
+from numpy import array, cross, arange, radians, tan, sqrt, sin, cos
 from scipy.integrate import odeint
 
 
@@ -122,15 +122,16 @@ class system(object):
         
         # Obtain alpha_d and beta_d to use on next iteration of the aeodynamic model
         # TODO: It slows down hugly the simulation. Solve it.
-        
-        '''
-        Valphabeta_d = array([1., 1./(TAS),1./(TAS*cos(beta))])*body2aero(uvw_d, alpha, beta)
-        beta_d = Valphabeta_d[1]
-        alpha_d = Valphabeta_d[2]
-        # Send information to aerodynamic model
-        aerodynamic.alpha_d = alpha_d
-        aerodynamic.beta_d = beta_d
-        '''
+        """
+        if t!=0:
+            Valphabeta_d = array([1., 1./(TAS),1./(TAS*cos(beta))])*body2aero(uvw_d, alpha, beta)
+            beta_d = Valphabeta_d[1]
+            alpha_d = Valphabeta_d[2]
+            # Send information to aerodynamic model
+            self.aircraft.alpha_d = alpha_d
+            self.aircraft.beta_d = beta_d
+            
+        """
         
         return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
     

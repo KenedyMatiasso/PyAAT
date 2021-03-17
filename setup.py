@@ -9,9 +9,10 @@ setup(
     download_url="https://github.com/KenedyMatiasso/PyAAT",
     license="MIT",
     packages=find_packages("pyaat"),
+    package_dir={'': "pyaat"},
     keywords=[
       "aerospace", "aeronauticd", "dynamics", "flight mechanics",
-      "simulation", "space systems", "aero", "control"
+      "simulation", "space", "aero", "control"
     ],
     python_requires=">=3.5",
     install_requires=[

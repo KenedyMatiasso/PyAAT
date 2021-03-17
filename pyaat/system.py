@@ -5,10 +5,10 @@ Distributed under MIT License
 
 This is the system file of PyAAT.
 """
-from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from tools import trimmer, trimmerClimb, linearization
-from tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
-from tools import longMatrix, body2aero
+from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
+from pyaat.tools import trimmer, trimmerClimb, linearization
+from pyaat.tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
+from pyaat.tools import longMatrix, body2aero
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, cos
 from scipy.integrate import odeint

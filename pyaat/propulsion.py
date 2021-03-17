@@ -7,7 +7,7 @@ propulsion model for turbo-propeller engine
 """
 
 from numpy import array, cross
-from constants import RHO_SEA
+from pyaat.constants import RHO_SEA
 
 class SimpleModel(object):
     def __init__(self):

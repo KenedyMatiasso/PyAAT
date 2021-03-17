@@ -10,7 +10,7 @@ This file implements the gravity models that can be used by PyAAT.
 """
 
 import numpy as np
-from constants import GRAVITY, MU_EARTH, R_EARTH, J2, J3, J4
+from pyaat.constants import GRAVITY, MU_EARTH, R_EARTH, J2, J3, J4
 from numpy import radians, sin, cos, array, sqrt
 
 # this class deppends on altitude, longiude and latidude

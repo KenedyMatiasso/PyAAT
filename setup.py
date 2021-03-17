@@ -1,25 +1,35 @@
 from setuptools import setup, find_packages
+import pathlib
 
-setup(
-    name="PyAAT",
-    description="Python Aerospace Analysis Toolbox",
-    version="0.0.dev1",
-    author="Kenedy Matiassp Portella",
-    author_email="kenedyportella@hotmail.com",
-    download_url="https://github.com/KenedyMatiasso/PyAAT",
-    license="MIT",
-    packages=find_packages("source"),
-    package_dir={'': "source"},
-    keywords=[
-      "aerospace", "aeronauticd", "dynamics", "flight mechanics",
-      "simulation", "space", "aero", "control"
-    ],
-    python_requires=">=3.5",
-    install_requires=[
-        "numpy",
+HERE = pathlib.Path(__file__).parent
+
+VERSION = "0.0.dev1"
+PACKAGE_NAME = "PyAAT"
+AUTHOR = "Kenedy Matiassp Portella"
+AUTHOR_EMAIL = "kenedyportella@hotmail.com"
+URL = "https://github.com/KenedyMatiasso/PyAAT"
+
+LICENSE = "MIT"
+DESCRIPTION = "Python Aerospace Analysis Toolbox"
+LONG_DESCRIPTION = (HERE / "README.rst").read_text()
+LONG_DESC_TYPE = "text/markdown"
+
+INSTALL_REQUIRES = [
+	"numpy",
         "scipy",
         "matplotlib",
         "control"
-    ],
-)
-setup()
+]
+
+setup(name=PACKAGE_NAME,
+      version=VERSION,
+      description=DESCRIPTION,
+      long_description=LONG_DESCRIPTION,
+      long_description_content_type=LONG_DESC_TYPE,
+      author=AUTHOR,
+      license=LICENSE,
+      author_email=AUTHOR_EMAIL,
+      url=URL,
+      install_requires=INSTALL_REQUIRES,
+      packages=find_packages()
+      )

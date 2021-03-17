@@ -7,6 +7,12 @@ lib/
 test/
 test
 pyaat/General.py
+build/
+build
+dist/
+dist
+PyAAT.egg-info/
+PyAAT.egg-info
 
 msg_gen/
 srv_gen/

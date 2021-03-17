@@ -8,8 +8,8 @@ setup(
     author_email="kenedyportella@hotmail.com",
     download_url="https://github.com/KenedyMatiasso/PyAAT",
     license="MIT",
-    packages=find_packages("pyaat"),
-    package_dir={'': "pyaat"},
+    packages=find_packages("source"),
+    package_dir={'': "source"},
     keywords=[
       "aerospace", "aeronauticd", "dynamics", "flight mechanics",
       "simulation", "space", "aero", "control"
@@ -22,3 +22,4 @@ setup(
         "control"
     ],
 )
+setup()

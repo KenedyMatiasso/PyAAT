@@ -25,6 +25,8 @@ class VerticalConstant(object):
         self._magnitude = GRAVITY
         self._versor = np.array([0, 0, 1], dtype=float)
         self._altitude = 0.0
+        self._latitude = 0.0
+        self._longitude = 0.0
         
     @property
     def _gravity(self):
@@ -44,6 +46,9 @@ class NewtonGravity(object):
     def __init__(self):
         self._versor = np.array([0, 0, 1], dtype=float)
         self._altitude = 0.0
+        self._altitude = 0.0
+        self._latitude = 0.0
+        self._longitude = 0.0
         
     @property
     def _magnitude(self):
@@ -67,9 +72,9 @@ class HighOrder(object):
 
     """
     def __init__(self):
-        self._altitude = 0.
-        self._latitude = 0.
-        self._longitude = 0.
+        self._altitude = 0.0
+        self._latitude = 0.0
+        self._longitude = 0.0
     
     @property
     def phi(self):

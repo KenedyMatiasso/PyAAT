@@ -90,6 +90,7 @@ class Aircraft(object):
         self.Ixz = 0.106e6
         self.Izy = 0.0
         self.Iyx = 0.0
+        
         self.inertia = array([[self.Ixx, -self.Iyx, -self.Ixz],
                               [-self.Iyx, self.Iyy, -self.Izy],
                               [-self.Ixz, -self.Izy, self.Izz]])

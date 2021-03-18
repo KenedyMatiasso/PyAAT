@@ -10,8 +10,6 @@ PyAAT
 .. |Open Source? Yes!| image:: https://badgen.net/badge/Open%20Source%20%3F/Yes%21/blue?icon=github
    :target: https://github.com/Naereen/badges/
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/ansicolortags.svg
-   :target: https://pypi.python.org/pypi/pyaat/
 
 .. |PyPI status| image:: https://img.shields.io/pypi/status/ansicolortags.svg
    :target: https://pypi.python.org/pypi/ansicolortags/
@@ -26,7 +24,7 @@ PyAAT
    :target: https://mybinder.org/v2/gh/KenedyMatiasso/PyAAT/3e355dbb77a3db0cfaef2a0a941bc9f79cfb32ed
 
 
-|python| |sphinx| |Open Source? Yes!| |PyPI| |PyPI status| |license| |mybinder| |docs|
+|python| |sphinx| |Open Source? Yes!| |PyPI status| |license| |mybinder| |docs|
 
 :Name: Python Aerospace Analysis Toolbox- PyAAT
 :Author: Kenedy Matiasso Portella

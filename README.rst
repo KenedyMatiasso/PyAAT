@@ -36,7 +36,7 @@ Python Aerospace Analysis Toolbox (PyAAT) is a open-Source python-based toolbox 
 About PyAAT
 **********************
 Python Aerospace Analysis Toolbox is a python package aimed to support aerospace engineers along the design process.
-It include a series of tools and models for modeling, analysis and simulation of aeronautic and space systems, it includes:
+It includes a series of tools and models for modeling, analysis and simulation of aeronautic and space systems, it includes:
 
 Atmosphere
 ===========

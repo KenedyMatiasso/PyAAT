@@ -13,6 +13,8 @@ dist/
 dist
 PyAAT.egg-info/
 PyAAT.egg-info
+examples/.ipynb_checkpoints/
+examples/.ipynb_checkpoints
 
 msg_gen/
 srv_gen/

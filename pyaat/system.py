@@ -5,24 +5,31 @@ Distributed under MIT License
 
 This is the system file of PyAAT.
 """
+#import sys 
+#sys.setrecursionlimit(10**4)
+
 from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
 from pyaat.tools import trimmer, trimmerClimb, linearization
 from pyaat.tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
 from pyaat.tools import longMatrix, body2aero
 
-from numpy import array, cross, arange, radians, tan, sqrt, sin, cos
+from numpy import array, cross, arange, radians, tan, sqrt, sin, copy
 from scipy.integrate import odeint
-
+from control import equilibrium
 
 class system(object):
-    def __init__(self, aircraft = None, atmosphere = None, propulsion = None, gravity = None):
+    def __init__(self, aircraft = None, atmosphere = None, propulsion = None, gravity = None, control=None):
         self.aircraft = aircraft
         self.atmosphere = atmosphere
         self.propulsion = propulsion
         self.gravity = gravity
+        eq = equilibrium()
+        self.control = [eq]
         self.Xe = None
         self.Ue = None
+        self.U = None
         self.time = None
+        
         
     def dynamics(self, t, X, U):
         # State space
@@ -136,7 +143,16 @@ class system(object):
         return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
     
     def simularaviao(self, X, t):
-        Xp = self.dynamics(t, X, self.Ue)
+        Ue = copy(self.Ue)
+        for cont in self.control:
+            cont.t = t
+            cont.Xe = self.Xe
+            cont.Ue = Ue
+            cont.X = X
+            self.U = cont.U
+            Ue = copy(self.U)
+        
+        Xp = self.dynamics(t, X, self.U)
         return Xp
     
     def trimmer(self, condition = 'cruize', HE = 5000.0, VE =150.0, dH = 0.0, dTH = 5., dPS = 2., BTA = 0.0):
@@ -155,7 +171,7 @@ class system(object):
         elif condition == 'curve':
             return trimmerCurve(self.dynamics, HE, VE, dPS, BTA)
     
-    def propagate(self, Xe, Ue, T0 = 0.0, TF=10.0, dt = 0.01, perturbation = False, state = {'beta':0., 'alpha':0.}):
+    def propagate(self, Xe, Ue, T0 = 0.0, TF=10.0, dt = 0.01, perturbation = False, state = {'beta':0., 'alpha':0.}, control = None):
         if perturbation == False:
             self.Ue = Ue
 
@@ -206,7 +222,11 @@ class system(object):
                 if value == 'beta':
                     V = sqrt(Xe[3]**2 + Xe[4]**2+ Xe[5]**2)
                     Xe[4] = Xe[4] + V*sin(radians(state['beta']))
+            
             self.Ue = Ue
+            
+            if control != None:
+                self.control.extend(control)
             
         self.time = arange(T0, TF, dt)
         solution = odeint(self.simularaviao, Xe, self.time)
@@ -217,11 +237,22 @@ class system(object):
         da = []
         dr = []
         
-        for t in self.time:
-            dp.append(Ue[0])
-            de.append(Ue[1])
-            da.append(Ue[2])
-            dr.append(Ue[3])
+        for i in range (0, len(self.time)):
+            t = self.time[i]
+            X = solution[i]          
+            Ue = copy(self.Ue)
+            for cont in self.control:
+                cont.t = t
+                cont.Xe = self.Xe
+                cont.Ue = Ue
+                cont.X = X
+                U = cont.U
+                Ue = copy(U)
+            
+            dp.append(U[0])
+            de.append(U[1])
+            da.append(U[2])
+            dr.append(U[3])
         
         control = array([dp, de, da, dr])    
 

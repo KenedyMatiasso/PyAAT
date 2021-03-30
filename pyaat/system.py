@@ -9,16 +9,19 @@ This is the system file of PyAAT.
 #sys.setrecursionlimit(10**4)
 
 from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from pyaat.tools import trimmer, trimmerClimb, linearization
-from pyaat.tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
-from pyaat.tools import longMatrix, body2aero
+from tools import trimmer, trimmerClimb, linearization
+from tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
+from pyaat.tools import longMatrix
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy
 from scipy.integrate import odeint
 from control import equilibrium
 
 class system(object):
-    def __init__(self, aircraft = None, atmosphere = None, propulsion = None, gravity = None, control=None):
+    
+    def __init__(self, aircraft = None, atmosphere = None, propulsion = None,
+                 gravity = None, control = None):
+        
         self.aircraft = aircraft
         self.atmosphere = atmosphere
         self.propulsion = propulsion
@@ -29,6 +32,8 @@ class system(object):
         self.Ue = None
         self.U = None
         self.time = None
+        self._flagError = 'VALID'       # flag error
+        self._error = ''                # error description
         
         
     def dynamics(self, t, X, U):
@@ -60,7 +65,6 @@ class system(object):
         Inertia = self.aircraft.inertia
         InvInertia = self.aircraft.invInertia
         
-        
         #gravity model
         self.gravity._altitude = -z
         g = self.gravity._gravity
@@ -77,9 +81,11 @@ class system(object):
         self.aircraft.delta_r = delta_r
         self.aircraft.delta_e = delta_e
         self.aircraft.delta_a = delta_a
+        
         self.aircraft.alpha = alpha
         self.aircraft.beta = beta
         self.aircraft.TAS = TAS
+        
         self.aircraft.p = p
         self.aircraft.q = q
         self.aircraft.r = r
@@ -129,6 +135,7 @@ class system(object):
         
         # Obtain alpha_d and beta_d to use on next iteration of the aeodynamic model
         # TODO: It slows down hugly the simulation. Solve it.
+        
         """
         if t!=0:
             Valphabeta_d = array([1., 1./(TAS),1./(TAS*cos(beta))])*body2aero(uvw_d, alpha, beta)
@@ -140,10 +147,24 @@ class system(object):
             
         """
         
-        return array([x_d, y_d, z_d, u_d, v_d, w_d, phi_d, theta_d, psi_d, p_d, q_d, r_d])
+        return array([
+            x_d,
+            y_d,
+            z_d,
+            u_d,
+            v_d,
+            w_d,
+            phi_d,
+            theta_d,
+            psi_d,
+            p_d,
+            q_d,
+            r_d
+            ])
     
     def simularaviao(self, X, t):
         Ue = copy(self.Ue)
+        
         for cont in self.control:
             cont.t = t
             cont.Xe = self.Xe
@@ -152,13 +173,27 @@ class system(object):
             self.U = cont.U
             Ue = copy(self.U)
         
-        Xp = self.dynamics(t, X, self.U)
-        return Xp
+        return self.dynamics(t, X, self.U)
+
     
-    def trimmer(self, condition = 'cruize', HE = 5000.0, VE =150.0, dH = 0.0, dTH = 5., dPS = 2., BTA = 0.0):
-        BTA = radians(BTA)
-        dTH = radians(dTH)
-        dPS = radians(dPS)
+    def trimmer(self, condition = 'cruize', HE = None, VE = None, dH = None,
+                dTH = None, dPS = None, BTA = None):
+        
+        if (type(BTA) == int 
+                or type(BTA) == float):
+            
+            BTA = radians(BTA)
+            
+        if (type(dTH) == int 
+                or type(dTH) == float):
+            
+            dTH = radians(dTH)
+            
+        if (type(dPS) == int 
+                or type(dPS) == float):
+            
+            dPS = radians(dPS)
+        
         if condition == 'cruize':
             return trimmer(self.dynamics, HE, VE)
         
@@ -171,7 +206,10 @@ class system(object):
         elif condition == 'curve':
             return trimmerCurve(self.dynamics, HE, VE, dPS, BTA)
     
-    def propagate(self, Xe, Ue, T0 = 0.0, TF=10.0, dt = 0.01, perturbation = False, state = {'beta':0., 'alpha':0.}, control = None):
+    def propagate(self, Xe, Ue, T0 = 0.0, TF = 10.0, dt = 0.01,
+                  perturbation = False, state = {'beta':0., 'alpha':0.},
+                  control = None):
+        
         if perturbation == False:
             self.Ue = Ue
 
@@ -238,9 +276,11 @@ class system(object):
         dr = []
         
         for i in range (0, len(self.time)):
+            
             t = self.time[i]
             X = solution[i]          
             Ue = copy(self.Ue)
+            
             for cont in self.control:
                 cont.t = t
                 cont.Xe = self.Xe

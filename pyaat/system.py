@@ -15,7 +15,7 @@ from pyaat.tools import longMatrix
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy
 from scipy.integrate import odeint
-from control import equilibrium
+from pyaat.control import equilibrium
 
 class system(object):
     

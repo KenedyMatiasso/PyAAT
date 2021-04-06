@@ -179,33 +179,100 @@ class system(object):
     def trimmer(self, condition = 'cruize', HE = None, VE = None, dH = None,
                 dTH = None, dPS = None, BTA = None):
         
-        if (type(BTA) == int 
-                or type(BTA) == float):
+        # Check if HE is valid
+        if HE == None:
+            self._flagError = 'INVALID'
+            self._error = 'You shall define an equilibrium altitude HE'
             
-            BTA = radians(BTA)
-            
-        if (type(dTH) == int 
-                or type(dTH) == float):
-            
-            dTH = radians(dTH)
-            
-        if (type(dPS) == int 
-                or type(dPS) == float):
-            
-            dPS = radians(dPS)
+        elif (type(HE) != int) and type(HE) != float:
+            self._flagError = 'INVALID'
+            self._error = 'The equilibrium altitude shall be a integer or a float'
+                
+        elif HE < 0:
+            self._flagError = 'INVALID'
+            self._error = 'The equilibrium altitude shall be positive'
         
+        # Check if VE is valid
+        if VE == None:
+            self._flagError = 'INVALID'
+            self._error = 'You shall define an equilibrium velocity VE'
+            
+        elif (type(VE) != int) and type(VE) != float:
+            self._flagError = 'INVALID'
+            self._error = 'The equilibrium velocity shall be a integer or a float'
+                
+        elif VE < 0:
+            self._flagError = 'INVALID'
+            self._error = 'The equilibrium velocity shall be positive'
+        
+        # If cruize condition
         if condition == 'cruize':
-            return trimmer(self.dynamics, HE, VE)
-        
+            if self._flagError == 'VALID':
+                return trimmer(self.dynamics, HE, VE)
+            else:
+                raise Exception(self._error)
+                
+        # If climb condition
         elif condition == 'climb':
-            return trimmerClimb(self.dynamics, HE, VE, dH)
-        
+            
+            # Check dH
+            if dH == None:
+                self._flagError = 'INVALID'
+                self._error = 'You shall define a climb rate dH'
+                    
+            elif (type(dH) != int) and type(dH) != float:
+                self._flagError = 'INVALID'
+                self._error = 'The equilibrium altitude shall be a integer or a float'
+                
+            if self._flagError == 'VALID':
+                return trimmerClimb(self.dynamics, HE, VE, dH)
+            else:
+                raise Exception(self._error)
+            
         elif condition == 'pullUp':
-            return trimmerPullUp(self.dynamics, HE, VE, dTH)
-        
-        elif condition == 'curve':
-            return trimmerCurve(self.dynamics, HE, VE, dPS, BTA)
-    
+            if dTH == None:
+                self._flagError = 'INVALID'
+                self._error = 'You shall define a value for theta rate dTH'
+                
+            elif (type(dTH) != int) and type(dTH) != float:
+                self._flagError = 'INVALID'
+                self._error = 'The theta rate dTH shall be a integer or a float'
+                    
+            elif dTH < 0:
+                self._flagError = 'INVALID'
+                self._error = 'The theta rate dTH shall be positive'       
+            
+            if self._flagError == 'VALID':
+
+                dTH = radians(dTH)
+                return trimmerPullUp(self.dynamics, HE, VE, dTH)
+            else:
+                raise Exception(self._error)
+                
+        elif condition == 'turn':
+            if dPS == None:
+                self._flagError = 'INVALID'
+                self._error = 'You shall define a value for turn rate dPS'
+                
+            elif (type(dPS) != int) and type(dPS) != float:
+                self._flagError = 'INVALID'
+                self._error = 'The turn rate dPS shall be a integer or a float'
+                
+            if BTA == None:
+                self._flagError = 'INVALID'
+                self._error = 'You shall define the slidinside angle BTA'
+                
+            elif (type(BTA) != int) and type(BTA) != float:
+                self._flagError = 'INVALID'
+                self._error = 'The slidinside angle BTA shall be a integer or a float'
+                
+            if self._flagError == 'VALID':
+                BTA = radians(BTA)
+                dPS = radians(dPS)
+                return trimmerCurve(self.dynamics, HE, VE, dPS, BTA)
+            else:
+                raise Exception(self._error)
+                
     def propagate(self, Xe, Ue, T0 = 0.0, TF = 10.0, dt = 0.01,
                   perturbation = False, state = {'beta':0., 'alpha':0.},
                   control = None):

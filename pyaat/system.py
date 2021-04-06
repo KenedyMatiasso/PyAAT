@@ -9,8 +9,8 @@ This is the system file of PyAAT.
 #sys.setrecursionlimit(10**4)
 
 from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from tools import trimmer, trimmerClimb, linearization
-from tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
+from pyaat.tools import trimmer, trimmerClimb, linearization
+from pyaat.tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
 from pyaat.tools import longMatrix
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy

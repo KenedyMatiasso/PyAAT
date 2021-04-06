@@ -3,7 +3,7 @@ import pathlib
 
 HERE = pathlib.Path(__file__).parent
 
-VERSION = "0.0.dev3"
+VERSION = "0.0.dev4"
 PACKAGE_NAME = "PyAAT"
 AUTHOR = "Kenedy Matiassp Portella"
 AUTHOR_EMAIL = "kenedyportella@hotmail.com"

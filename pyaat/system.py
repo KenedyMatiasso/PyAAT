@@ -186,7 +186,7 @@ class system(object):
             
         elif (type(HE) != int) and type(HE) != float:
             self._flagError = 'INVALID'
-            self._error = 'The equilibrium altitude shall be a integer or a float'
+            self._error = 'The equilibrium altitude shall be an integer or a float'
                 
         elif HE < 0:
             self._flagError = 'INVALID'
@@ -199,7 +199,7 @@ class system(object):
             
         elif (type(VE) != int) and type(VE) != float:
             self._flagError = 'INVALID'
-            self._error = 'The equilibrium velocity shall be a integer or a float'
+            self._error = 'The equilibrium velocity shall be an integer or a float'
                 
         elif VE < 0:
             self._flagError = 'INVALID'
@@ -222,7 +222,7 @@ class system(object):
                     
             elif (type(dH) != int) and type(dH) != float:
                 self._flagError = 'INVALID'
-                self._error = 'The equilibrium altitude shall be a integer or a float'
+                self._error = 'The equilibrium altitude shall be an integer or a float'
                 
             if self._flagError == 'VALID':
                 return trimmerClimb(self.dynamics, HE, VE, dH)
@@ -236,7 +236,7 @@ class system(object):
                 
             elif (type(dTH) != int) and type(dTH) != float:
                 self._flagError = 'INVALID'
-                self._error = 'The theta rate dTH shall be a integer or a float'
+                self._error = 'The theta rate dTH shall be an integer or a float'
                     
             elif dTH < 0:
                 self._flagError = 'INVALID'
@@ -256,7 +256,7 @@ class system(object):
                 
             elif (type(dPS) != int) and type(dPS) != float:
                 self._flagError = 'INVALID'
-                self._error = 'The turn rate dPS shall be a integer or a float'
+                self._error = 'The turn rate dPS shall be an integer or a float'
                 
             if BTA == None:
                 self._flagError = 'INVALID'
@@ -264,7 +264,7 @@ class system(object):
                 
             elif (type(BTA) != int) and type(BTA) != float:
                 self._flagError = 'INVALID'
-                self._error = 'The slidinside angle BTA shall be a integer or a float'
+                self._error = 'The slidinside angle BTA shall be an integer or a float'
                 
             if self._flagError == 'VALID':
                 BTA = radians(BTA)

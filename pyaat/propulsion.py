@@ -15,9 +15,9 @@ class SimpleModel(object):
         self.delta_p = 0.0
         
         # States
-        self.TAS = 0.0
+        self.TAS = 200.0
         self._rho = RHO_SEA
-        
+    
         # parameters
         self.Fmaxi = 70e3
         self.nrho = 0.775
@@ -35,3 +35,7 @@ class SimpleModel(object):
     @property
     def Moments(self):
         return cross(self.Forces, self.position)
+    
+    @property
+    def Power(self):
+        return self.Fmaxi/self.Vi**self.nv*(self._rho/self.rhoi)**(self.nrho)

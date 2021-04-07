@@ -5,6 +5,7 @@ Distributed under MIT License
 
 This file contains methods and functions for performance analysis
 """
+
 from numpy import linspace, sqrt
 from scipy.optimize import fsolve
 

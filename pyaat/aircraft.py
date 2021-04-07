@@ -5,7 +5,7 @@ Distributed under MIT License
 
 Aerodynamic model for a convencional aicraft
 """
-from numpy import array
+from numpy import array, radians
 from pyaat.constants import RHO_SEA
 from numpy.linalg import inv
 
@@ -96,6 +96,10 @@ class Aircraft(object):
                               [-self.Ixz, -self.Izy, self.Izz]])
         
         self.invInertia = inv(self.inertia)
+        
+        self.CLmax = 2.4
+        self.qmax = 23052.05 # considering 700km/h at sea level
+        self.k = self.CDa/(2*self.CLa*self.CL0) #linear esimation TODO:imporve it
         
     @property
     def qdyn(self):

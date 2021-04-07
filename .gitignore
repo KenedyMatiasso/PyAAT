@@ -16,6 +16,8 @@ PyAAT.egg-info
 examples/.ipynb_checkpoints/
 examples/.ipynb_checkpoints
 pyaat/UserFile.py
+doc.MD
+DOC.MD
 
 msg_gen/
 srv_gen/

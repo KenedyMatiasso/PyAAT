@@ -26,6 +26,7 @@ class SimpleModel(object):
         self.Vi = 200.0
         self.position = array([0,0,1.42])
         self.attitude = array([0.,0.,0.])
+        self.Pmax = self.Fmaxi*self.Vi
         
     @property
     def Forces(self):

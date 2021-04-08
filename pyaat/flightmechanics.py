@@ -5,7 +5,8 @@ Distributed under MIT License
 
 This file contains methods and functions for flight mechanics analysis
 """
-from numpy import zeros, array
+from numpy import zeros, array, dot
+from numpy.linalg import inv
 
 def modesMatrix(A,B):
     Ai = zeros((10,10))
@@ -68,4 +69,30 @@ def shortPeriodMatrix(A,B):
     
     Bsp = array([[B[3,0], B[3,1]],
                  [B[8,0], B[8,1]]])
+    return Asp, Bsp
+
+def phugoid(A,B):
+    Asp = array([[A[3,3], A[3,8]],
+                 [A[8,3], A[8,8]]])
+    
+    Bsp = array([[B[3,0], B[3,1]],
+                 [B[8,0], B[8,1]]])
+    
+    Aspph = array([[A[3,1], A[3,5], A[3,0]],
+                  [A[8,1], A[8,5], A[8,0]]])
+    
+    Aphph = array([[A[1,1], A[1,5], A[1,0]],
+                [A[5,1], A[5,5], A[5,0]],
+                [A[0,1], A[0,5], A[0,0]]])
+    
+    Bphph = array([[B[1,0], B[1,1]],
+                  [B[5,0], B[5,1]],
+                  [B[0,0], B[0,1]]])
+    
+    Aphsp =array([[A[1,3], A[1,8]],
+                  [A[5,3], A[5,8]],
+                  [A[0,3], A[0,8]]])
+    
+    Aph = Aphph - Aphsp.dot(inv(Asp).dot(Aspph))
+    Bph = Bphph - Aphsp.dot(inv(Asp).dot(Bsp))
     return Asp, Bsp

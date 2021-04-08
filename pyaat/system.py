@@ -13,7 +13,7 @@ from pyaat.tools import trimmer, trimmerClimb, linearization
 from pyaat.tools import trimmerPullUp, trimmerCurve
 
 from flightmechanics import lateroMatrix, modesMatrix, longMatrix
-from flightmechanics import shortPeriodMatrix
+from flightmechanics import shortPeriodMatrix, phugoidMatrix
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy
 from scipy.integrate import odeint
@@ -386,4 +386,7 @@ class system(object):
         A, B = linearization(self.dynamics, Xe, Ue)
         return shortPeriodMatrix(A, B)
     
+    def phugoid(self, Xe, Ue):
+        A, B = linearization(self.dynamics, Xe, Ue)
+        return phugoidMatrix(A, B)
     

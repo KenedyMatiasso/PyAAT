@@ -71,7 +71,7 @@ def shortPeriodMatrix(A,B):
                  [B[8,0], B[8,1]]])
     return Asp, Bsp
 
-def phugoid(A,B):
+def phugoidMatrix(A,B):
     Asp = array([[A[3,3], A[3,8]],
                  [A[8,3], A[8,8]]])
     
@@ -94,5 +94,5 @@ def phugoid(A,B):
                   [A[0,3], A[0,8]]])
     
     Aph = Aphph - Aphsp.dot(inv(Asp).dot(Aspph))
-    Bph = Bphph - Aphsp.dot(inv(Asp).dot(Bsp))
-    return Asp, Bsp
+    Bph = Bphph - Aphsp.dot(inv(Asp)).dot(Bsp)
+    return Aph, Bph

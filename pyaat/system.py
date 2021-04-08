@@ -10,8 +10,10 @@ This is the system file of PyAAT.
 
 from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
 from pyaat.tools import trimmer, trimmerClimb, linearization
-from pyaat.tools import trimmerPullUp, trimmerCurve, lateroMatrix, modesMatrix
-from pyaat.tools import longMatrix
+from pyaat.tools import trimmerPullUp, trimmerCurve
+
+from flightmechanics import lateroMatrix, modesMatrix, longMatrix
+from flightmechanics import shortPeriodMatrix
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy
 from scipy.integrate import odeint
@@ -380,5 +382,8 @@ class system(object):
         A, B = linearization(self.dynamics, Xe, Ue)
         return longMatrix(A, B)
 
+    def shortPeriod(self, Xe, Ue):
+        A, B = linearization(self.dynamics, Xe, Ue)
+        return shortPeriodMatrix(A, B)
     
     

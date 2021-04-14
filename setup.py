@@ -3,7 +3,7 @@ import pathlib
 
 HERE = pathlib.Path(__file__).parent
 
-VERSION = "0.0.dev5"
+VERSION = "0.0.dev6"
 PACKAGE_NAME = "PyAAT"
 AUTHOR = "Kenedy Matiassp Portella"
 AUTHOR_EMAIL = "kenedyportella@hotmail.com"
@@ -11,7 +11,7 @@ URL = "https://github.com/KenedyMatiasso/PyAAT"
 
 LICENSE = "MIT"
 DESCRIPTION = "Python Aerospace Analysis Toolbox"
-LONG_DESCRIPTION = (HERE / "README.rst").read_text()
+LONG_DESCRIPTION = (HERE / "DOC.MD").read_text()
 LONG_DESC_TYPE = "text/markdown"
 
 INSTALL_REQUIRES = [

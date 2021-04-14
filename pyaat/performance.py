@@ -10,7 +10,7 @@ from numpy import linspace, sqrt
 from scipy.optimize import fsolve
 
 import matplotlib.pyplot as plt
-from tools import RootFinder
+from pyaat.tools import RootFinder
 
 class Envelope():
     def __init__(self, system = None, plot = True, limits = [0,3000]):

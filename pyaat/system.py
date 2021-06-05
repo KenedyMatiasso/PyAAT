@@ -8,16 +8,16 @@ This is the system file of PyAAT.
 #import sys 
 #sys.setrecursionlimit(10**4)
 
-from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from pyaat.tools import trimmer, trimmerClimb, linearization
-from pyaat.tools import trimmerPullUp, trimmerCurve
+from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
+from tools import trimmer, trimmerClimb, linearization
+from tools import trimmerPullUp, trimmerCurve
 
 from flightmechanics import lateroMatrix, modesMatrix, longMatrix
 from flightmechanics import shortPeriodMatrix, phugoidMatrix
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy
 from scipy.integrate import odeint
-from pyaat.control import equilibrium
+from control import equilibrium
 
 class system(object):
     

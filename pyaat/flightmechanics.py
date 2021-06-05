@@ -52,7 +52,7 @@ def lateroMatrix(A,B):
     Bl = zeros((5,2))
     Am, Bm =  modesMatrix(A,B)
     Al = Am[5:,5:]
-    Bl = Bm[:,1:]
+    Bl = Bm[5:,2:]
     return Al, Bl
 
 def longMatrix(A,B):
@@ -60,7 +60,7 @@ def longMatrix(A,B):
     Bl = zeros((5,2))
     Am, Bm =  modesMatrix(A,B)
     Al = Am[:5,:5]
-    Bl = Bm[:,:2]
+    Bl = Bm[:5,:2]
     return Al, Bl
 
 def shortPeriodMatrix(A,B):

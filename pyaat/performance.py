@@ -105,3 +105,4 @@ class Envelope():
         plt.scatter(self.lim_prop_max[-1], self.celling, color = 'k', label = f"Service celling: {round(self.celling[0],2)} m")
         plt.xlim(self.limits)
         plt.legend()
+        plt.show()

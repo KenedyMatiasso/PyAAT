@@ -18,6 +18,8 @@ examples/.ipynb_checkpoints
 pyaat/UserFile.py
 doc.MD
 DOC.MD
+.vscode/
+pyaat/.vscode/
 
 msg_gen/
 srv_gen/

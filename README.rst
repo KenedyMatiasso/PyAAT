@@ -1,4 +1,4 @@
-PyAAT
+PyAAT - Python Aerospace Analysis Toolbox
 ########
 
 .. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg

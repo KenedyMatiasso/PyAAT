@@ -1,5 +1,11 @@
 PyAAT - Python Aerospace Analysis Toolbox
-########
+###########################################################
+
+.. image:: docs/PyAAT_logo.png
+   :height: 500px
+   :scale: 50 %
+   :alt: alternate text
+   :align: right
 
 .. |python| image:: https://img.shields.io/badge/Made%20with-Python-1f425f.svg
    :target: https://www.python.org/

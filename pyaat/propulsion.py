@@ -13,6 +13,8 @@ from tools import body2earth
 
 class metaPropulsion(ABC):
     def __init__(self, name, position = array([0.0, 0.0, 0.0]), attitude = array([0.0, 0.0, 0.0])):
+        self._flagError = 'VALID'       # flag error
+        self._error = ''                # error description
         self._delta_p = 0.0
         self._attitude = attitude
         self._position = position

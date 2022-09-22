@@ -19,8 +19,8 @@ class metaAtmosphere(ABC):
             self._flagError = 'VALID'       # flag error
             self._error = ''                # error description
 
-            self._deltaT = deltaT            # Deviation of temperature from standard atmosphere (15 degrees celcius)
-            self._altitude = altitude              # altitude [m]
+            self._deltaT = deltaT           # Deviation of temperature from standard atmosphere (15 degrees celcius)
+            self._altitude = altitude       # altitude [m]
 
     @property
     @abstractmethod

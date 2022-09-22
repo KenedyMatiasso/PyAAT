@@ -17,6 +17,266 @@ matplotlib.rcParams['axes.formatter.useoffset'] = False
 
 from scipy.optimize import fsolve
 
+def rpm2radps(vel):
+    return vel*0.10472
+
+class RootFinder:
+    def __init__(self, start, stop, step=0.01, root_dtype="float64", xtol=1e-9):
+
+        self.start = start
+        self.stop = stop
+        self.step = step
+        self.xtol = xtol
+        self.roots = array([], dtype=root_dtype)
+
+    def add_to_roots(self, x):
+
+        if (x < self.start) or (x > self.stop):
+            return  # outside range
+        if any(abs(self.roots - x) < self.xtol):
+            return  # root already found.
+
+        self.roots = append(self.roots, x)
+
+    def find(self, f, *args):
+        current = self.start
+
+        for x0 in arange(self.start, self.stop + self.step, self.step):
+            if x0 < current:
+                continue
+            x = self.find_root(f, x0, *args)
+            if x is None:  # no root found.
+                continue
+            current = x
+            self.add_to_roots(x)
+
+        return self.roots
+
+    def find_root(self, f, x0, *args):
+
+        x, _, ier, _ = fsolve(f, x0=x0, args=args, full_output=True, xtol=self.xtol)
+        if ier == 1:
+            return x[0]
+        return None
+
+class plotter(object):
+    def __init__(self):
+        # State space
+        self.states = array([0,0,0,0,0,0,0,0,0,0,0,0])
+        self.time = None
+        self.control = array([0,0,0,0])
+
+    @property
+    def x(self):
+        return self.states[:,0]
+    
+    @property
+    def y(self):
+        return self.states[:,1]
+    
+    @property
+    def z(self):
+        return self.states[:,2]
+    
+    @property
+    def H(self):
+        return -self.states[:,2]   
+    
+    @property
+    def u(self):
+        return self.states[:,3]
+    
+    @property
+    def v(self):
+        return self.states[:,4]
+    
+    @property
+    def w(self):
+        return self.states[:,5]
+    
+    @property
+    def phi(self):
+        return self.states[:,6]
+    
+    @property
+    def theta(self):
+        return self.states[:,7]
+    
+    @property
+    def psi(self):
+        return self.states[:,8] 
+    
+    @property
+    def p(self):
+        return self.states[:,9]
+    
+    @property
+    def q(self):
+        return self.states[:,10]
+    
+    @property
+    def r(self):
+        return self.states[:,11]
+    
+    @property
+    def uvw(self):
+        return array([self.u, self.v, self.w])
+    
+    @property
+    def TAS(self):
+        alpha, beta, TAS = computeTAS(self.uvw)
+        return TAS
+    
+    @property
+    def alpha(self):
+        alpha, beta, TAS = computeTAS(self.uvw)
+        return alpha
+    
+    @property
+    def beta(self):
+        alpha, beta, TAS = computeTAS(self.uvw)
+        return beta
+    
+    @property
+    def delta_p(self):
+        return self.control[0,:]
+    
+    @property
+    def delta_e(self):
+        return self.control[1,:]
+
+    @property
+    def delta_a(self):
+        return self.control[2,:]
+    
+    @property
+    def delta_r(self):
+        return self.control[3,:]
+
+    def LinVel(self, frame = 'body'):
+        if frame == 'aero':
+            plt.figure()
+            plt.subplot(311)
+            plt.title("Linear Velocity")
+            plt.plot(self.time, around(self.TAS, decimals=4), color = 'red')
+            plt.ylabel('V [m/s]')
+            plt.grid()
+            plt.subplot(312)
+            plt.plot(self.time, around(degrees(self.alpha), decimals=4), color = 'red')
+            plt.ylabel(r'$\alpha$ [deg]')
+            plt.grid()
+            plt.subplot(313)
+            plt.plot(self.time, around(degrees(self.beta), decimals=4), color = 'red')
+            plt.ylabel(r'$\beta$ [deg]')
+            plt.grid()
+            plt.show()
+        else:
+            plt.figure()
+            plt.subplot(311)
+            plt.title("Velocity")
+            plt.plot(self.time, around(self.u, decimals=4), color = 'red')
+            plt.ylabel('u [m/s]')
+            plt.grid()
+            plt.subplot(312)
+            plt.plot(self.time, around(self.v, decimals=4), color = 'red')
+            plt.ylabel('v [m/s]')
+            plt.grid()
+            plt.subplot(313)
+            plt.plot(self.time, around(self.w, decimals=4), color = 'red')
+            plt.ylabel('w [m/s]')
+            plt.grid()
+            plt.show()
+            
+    def LinPos(self):
+        plt.figure()
+        plt.subplot(311)
+        plt.title("Linear position")
+        plt.plot(self.time, around(self.x, decimals=4), color = 'red')
+        plt.ylabel('x [m]')
+        plt.grid()
+        plt.subplot(312)
+        plt.plot(self.time, around(self.y, decimals=4), color = 'red')
+        plt.ylabel('y [m]')
+        plt.grid()
+        plt.subplot(313)
+        plt.plot(self.time,around(-self.z, decimals=4), color = 'red')
+        plt.ylabel('H [m]')
+        plt.grid()
+        plt.show()
+        
+    def LinPos3D(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot3D(around(self.x, decimals=4), around(self.y, decimals=4), around(-self.z, decimals=4), 'red')
+        
+    def Attitude(self):
+        plt.figure()
+        plt.subplot(311)
+        plt.title("Attitude")
+        plt.plot(self.time, around(degrees(self.phi), decimals=4), color = 'red')
+        plt.ylabel('$\Phi$ [deg]')
+        plt.grid()
+        plt.subplot(312)
+        plt.plot(self.time, around(degrees(self.theta), decimals=4), color = 'red')
+        plt.ylabel('$\Theta$ [deg]')
+        plt.grid()
+        plt.subplot(313)
+        plt.plot(self.time, around(degrees(self.psi), decimals=4), color = 'red')
+        plt.ylabel('$\Psi$ [deg]')
+        plt.grid()
+        plt.show()
+        
+    def linPos2D(self):
+        plt.figure()
+        plt.subplot(211)
+        plt.title("Attitude")
+        plt.plot(around(self.x, decimals=4), around(self.y, decimals=4), color = 'red')
+        plt.ylabel('Y position]')
+        plt.grid()
+        plt.subplot(212)
+        plt.plot(around(self.x, decimals=4), around(-self.z, decimals=4), color = 'red')
+        plt.ylabel('X position')
+        plt.grid()
+        plt.show()
+        
+    def AngVel(self):
+        plt.figure()
+        plt.subplot(311)
+        plt.title("Angular Speed")
+        plt.plot(self.time, around(degrees(self.p), decimals=4), color = 'red')
+        plt.ylabel('$p$ [deg/s]')
+        plt.grid()
+        plt.subplot(312)
+        plt.plot(self.time, around(degrees(self.q), decimals=4), color = 'red')
+        plt.ylabel('$q$ [deg/s]')
+        plt.grid()
+        plt.subplot(313)
+        plt.plot(self.time, around(degrees(self.r), decimals=4), color = 'red')
+        plt.ylabel('$r$ [deg/s]')
+        plt.grid()
+        plt.show()
+        
+    def Controls(self):
+        plt.figure()
+        plt.subplot(411)
+        plt.title("Controls")
+        plt.plot(self.time, around(self.delta_p, decimals=4), color = 'red')
+        plt.ylabel('$\delta_p$ [%]')
+        plt.grid()
+        plt.subplot(412)
+        plt.plot(self.time, around(degrees(self.delta_e), decimals=4), color = 'red')
+        plt.ylabel('$\delta_e$ [deg]')
+        plt.grid()
+        plt.subplot(413)
+        plt.plot(self.time, around(degrees(self.delta_a), decimals=4), color = 'red')
+        plt.ylabel('$\delta_a$ [deg]')
+        plt.grid()
+        plt.subplot(414)
+        plt.plot(self.time, around(degrees(self.delta_r), decimals=4), color = 'red')
+        plt.ylabel('$\delta_r$ [deg]')
+        plt.grid()
+        plt.show()
+
 def C1(theta):
     """
     Parameters
@@ -769,265 +1029,3 @@ def bmatrix(a):
     rv += ['  ' + ' & '.join(l.split()) + r'\\' for l in lines]
     rv +=  [r'\end{bmatrix}']
     return '\n'.join(rv)
-
-
-
-def rpm2radps(vel):
-    return vel*0.10472
-
-class RootFinder:
-    def __init__(self, start, stop, step=0.01, root_dtype="float64", xtol=1e-9):
-
-        self.start = start
-        self.stop = stop
-        self.step = step
-        self.xtol = xtol
-        self.roots = array([], dtype=root_dtype)
-
-    def add_to_roots(self, x):
-
-        if (x < self.start) or (x > self.stop):
-            return  # outside range
-        if any(abs(self.roots - x) < self.xtol):
-            return  # root already found.
-
-        self.roots = append(self.roots, x)
-
-    def find(self, f, *args):
-        current = self.start
-
-        for x0 in arange(self.start, self.stop + self.step, self.step):
-            if x0 < current:
-                continue
-            x = self.find_root(f, x0, *args)
-            if x is None:  # no root found.
-                continue
-            current = x
-            self.add_to_roots(x)
-
-        return self.roots
-
-    def find_root(self, f, x0, *args):
-
-        x, _, ier, _ = fsolve(f, x0=x0, args=args, full_output=True, xtol=self.xtol)
-        if ier == 1:
-            return x[0]
-        return None
-
-class plotter(object):
-    def __init__(self):
-        # State space
-        self.states = array([0,0,0,0,0,0,0,0,0,0,0,0])
-        self.time = None
-        self.control = array([0,0,0,0])
-
-    @property
-    def x(self):
-        return self.states[:,0]
-    
-    @property
-    def y(self):
-        return self.states[:,1]
-    
-    @property
-    def z(self):
-        return self.states[:,2]
-    
-    @property
-    def H(self):
-        return -self.states[:,2]   
-    
-    @property
-    def u(self):
-        return self.states[:,3]
-    
-    @property
-    def v(self):
-        return self.states[:,4]
-    
-    @property
-    def w(self):
-        return self.states[:,5]
-    
-    @property
-    def phi(self):
-        return self.states[:,6]
-    
-    @property
-    def theta(self):
-        return self.states[:,7]
-    
-    @property
-    def psi(self):
-        return self.states[:,8] 
-    
-    @property
-    def p(self):
-        return self.states[:,9]
-    
-    @property
-    def q(self):
-        return self.states[:,10]
-    
-    @property
-    def r(self):
-        return self.states[:,11]
-    
-    @property
-    def uvw(self):
-        return array([self.u, self.v, self.w])
-    
-    @property
-    def TAS(self):
-        alpha, beta, TAS = computeTAS(self.uvw)
-        return TAS
-    
-    @property
-    def alpha(self):
-        alpha, beta, TAS = computeTAS(self.uvw)
-        return alpha
-    
-    @property
-    def beta(self):
-        alpha, beta, TAS = computeTAS(self.uvw)
-        return beta
-    
-    @property
-    def delta_p(self):
-        return self.control[0,:]
-    
-    @property
-    def delta_e(self):
-        return self.control[1,:]
-
-    @property
-    def delta_a(self):
-        return self.control[2,:]
-    
-    @property
-    def delta_r(self):
-        return self.control[3,:]
-
-    def LinVel(self, frame = 'body'):
-        if frame == 'aero':
-            plt.figure()
-            plt.subplot(311)
-            plt.title("Linear Velocity")
-            plt.plot(self.time, around(self.TAS, decimals=4), color = 'red')
-            plt.ylabel('V [m/s]')
-            plt.grid()
-            plt.subplot(312)
-            plt.plot(self.time, around(degrees(self.alpha), decimals=4), color = 'red')
-            plt.ylabel(r'$\alpha$ [deg]')
-            plt.grid()
-            plt.subplot(313)
-            plt.plot(self.time, around(degrees(self.beta), decimals=4), color = 'red')
-            plt.ylabel(r'$\beta$ [deg]')
-            plt.grid()
-            plt.show()
-        else:
-            plt.figure()
-            plt.subplot(311)
-            plt.title("Velocity")
-            plt.plot(self.time, around(self.u, decimals=4), color = 'red')
-            plt.ylabel('u [m/s]')
-            plt.grid()
-            plt.subplot(312)
-            plt.plot(self.time, around(self.v, decimals=4), color = 'red')
-            plt.ylabel('v [m/s]')
-            plt.grid()
-            plt.subplot(313)
-            plt.plot(self.time, around(self.w, decimals=4), color = 'red')
-            plt.ylabel('w [m/s]')
-            plt.grid()
-            plt.show()
-            
-    def LinPos(self):
-        plt.figure()
-        plt.subplot(311)
-        plt.title("Linear position")
-        plt.plot(self.time, around(self.x, decimals=4), color = 'red')
-        plt.ylabel('x [m]')
-        plt.grid()
-        plt.subplot(312)
-        plt.plot(self.time, around(self.y, decimals=4), color = 'red')
-        plt.ylabel('y [m]')
-        plt.grid()
-        plt.subplot(313)
-        plt.plot(self.time,around(-self.z, decimals=4), color = 'red')
-        plt.ylabel('H [m]')
-        plt.grid()
-        plt.show()
-        
-    def LinPos3D(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        ax.plot3D(around(self.x, decimals=4), around(self.y, decimals=4), around(-self.z, decimals=4), 'red')
-        
-    def Attitude(self):
-        plt.figure()
-        plt.subplot(311)
-        plt.title("Attitude")
-        plt.plot(self.time, around(degrees(self.phi), decimals=4), color = 'red')
-        plt.ylabel('$\Phi$ [deg]')
-        plt.grid()
-        plt.subplot(312)
-        plt.plot(self.time, around(degrees(self.theta), decimals=4), color = 'red')
-        plt.ylabel('$\Theta$ [deg]')
-        plt.grid()
-        plt.subplot(313)
-        plt.plot(self.time, around(degrees(self.psi), decimals=4), color = 'red')
-        plt.ylabel('$\Psi$ [deg]')
-        plt.grid()
-        plt.show()
-        
-    def linPos2D(self):
-        plt.figure()
-        plt.subplot(211)
-        plt.title("Attitude")
-        plt.plot(around(self.x, decimals=4), around(self.y, decimals=4), color = 'red')
-        plt.ylabel('Y position]')
-        plt.grid()
-        plt.subplot(212)
-        plt.plot(around(self.x, decimals=4), around(-self.z, decimals=4), color = 'red')
-        plt.ylabel('X position')
-        plt.grid()
-        plt.show()
-        
-    def AngVel(self):
-        plt.figure()
-        plt.subplot(311)
-        plt.title("Angular Speed")
-        plt.plot(self.time, around(degrees(self.p), decimals=4), color = 'red')
-        plt.ylabel('$p$ [deg/s]')
-        plt.grid()
-        plt.subplot(312)
-        plt.plot(self.time, around(degrees(self.q), decimals=4), color = 'red')
-        plt.ylabel('$q$ [deg/s]')
-        plt.grid()
-        plt.subplot(313)
-        plt.plot(self.time, around(degrees(self.r), decimals=4), color = 'red')
-        plt.ylabel('$r$ [deg/s]')
-        plt.grid()
-        plt.show()
-        
-    def Controls(self):
-        plt.figure()
-        plt.subplot(411)
-        plt.title("Controls")
-        plt.plot(self.time, around(self.delta_p, decimals=4), color = 'red')
-        plt.ylabel('$\delta_p$ [%]')
-        plt.grid()
-        plt.subplot(412)
-        plt.plot(self.time, around(degrees(self.delta_e), decimals=4), color = 'red')
-        plt.ylabel('$\delta_e$ [deg]')
-        plt.grid()
-        plt.subplot(413)
-        plt.plot(self.time, around(degrees(self.delta_a), decimals=4), color = 'red')
-        plt.ylabel('$\delta_a$ [deg]')
-        plt.grid()
-        plt.subplot(414)
-        plt.plot(self.time, around(degrees(self.delta_r), decimals=4), color = 'red')
-        plt.ylabel('$\delta_r$ [deg]')
-        plt.grid()
-        plt.show()

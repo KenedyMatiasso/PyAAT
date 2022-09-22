@@ -24,7 +24,7 @@ class metaAtmosphere(ABC):
 
     @property
     @abstractmethod
-    def _temperature(self): # Air temperature [*C]
+    def _airTemperature(self): # Air temperature [*C]
         pass
     
     @property
@@ -60,7 +60,7 @@ class metaAtmosphere(ABC):
         return self._deltaT
 
     def get_temperature(self):
-        return self._temperature
+        return self._airTemperature
 
     def get_soundVelocity(self):
         return self._soundVel
@@ -114,7 +114,7 @@ class atmosCOESA(metaAtmosphere):
                                 7.9779e-1, 4.2525e-1, 2.1958e-1, 1.0929e-1, 5.2209e-2, 2.3881e-2, 1.0524e-2, 4.0802e-3]])
 
     @property
-    def _temperature(self):
+    def _airTemperature(self):
         return interp(self._altitude, self._parameters[0], self._parameters[1]) + self._deltaT
     
     @property 
@@ -123,11 +123,11 @@ class atmosCOESA(metaAtmosphere):
     
     @property
     def _rho(self): # air density [kg/m³]
-        return self._pressure / (R_AIR * (self._temperature ))
+        return self._pressure / (R_AIR * (self._airTemperature ))
         
     @property
     def _soundVel(self):  # velocity of sound [m/s]
-        return sqrt(GAMMA_AIR * R_AIR * (self._temperature))
+        return sqrt(GAMMA_AIR * R_AIR * (self._airTemperature))
 
 class atmosISA(metaAtmosphere):
     """
@@ -148,7 +148,7 @@ class atmosISA(metaAtmosphere):
           # Store information about atmosphere behavior as functions
 
     @property
-    def _temperature(self):
+    def _airTemperature(self):
         return interp(self._altitude, self._parameters[0], self._parameters[1]) + self._deltaT
     
     @property 
@@ -157,11 +157,11 @@ class atmosISA(metaAtmosphere):
     
     @property
     def _rho(self): # air density [kg/m³]
-        return self._pressure / (R_AIR * (self._temperature))
+        return self._pressure / (R_AIR * (self._airTemperature))
         
     @property
     def _soundVel(self):  # velocity of sound [m/s]
-        return sqrt(GAMMA_AIR * R_AIR * (self._temperature))
+        return sqrt(GAMMA_AIR * R_AIR * (self._airTemperature))
 
 
 
@@ -180,12 +180,12 @@ class CookModel(metaAtmosphere):
         return PRESURE_SEA
 
     @property
-    def _temperature(self): # temperature [K]
+    def _airTemperature(self): # temperature [K]
         return 288.16 + self._Ir * self._altitude
     
     @property
     def _rho(self): # air density [kg/m³]
-        return RHO_SEA *(self._temperature/288.16)**(-(GRAVITY/(self._Ir*R_AIR)+1))
+        return RHO_SEA *(self._airTemperature/288.16)**(-(GRAVITY/(self._Ir*R_AIR)+1))
         
     @property
     def _soundVel(self):  # velocity of sound [m/s]
@@ -206,7 +206,7 @@ class seaLevel(metaAtmosphere):
         return PRESURE_SEA
 
     @property
-    def _temperature(self): # temperature [K]
+    def _airTemperature(self): # temperature [K]
         return TEMP_SEA
     
     @property
@@ -229,7 +229,7 @@ class windTunnel(metaAtmosphere):
     def __init__(self):
         self._pressure = None    # pressure [Pa]
         self._altitude = None            # altitude [m]
-        self._temperature = None    # temperature [K]
+        self._airTemperature = None    # temperature [K]
         self._soundVel = None  # velocity of sound [m/s]
         self._rho = None      # air density [kg/m³]
         self._flagError = 'ERROR'       # flag error

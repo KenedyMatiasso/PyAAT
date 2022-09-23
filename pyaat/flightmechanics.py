@@ -9,7 +9,6 @@ from numpy import zeros, array, dot, arange, sqrt
 from numpy.linalg import inv
 import matplotlib.pyplot as plt
 import numpy as np
-
 from matplotlib.ticker import StrMethodFormatter
 
 def modesMatrix(A,B):
@@ -152,7 +151,6 @@ def spiralMatrix(A,B):
     
     return As, Bs
     
-
 def shortPeriodQuality(omega, zeta, aircraft = None, phase = None):
     FL =array([[0.32805384412649785, 5.24932301009952],
     [0.29722785662292733, 4.9395072413178855],

@@ -84,7 +84,7 @@ class Aircraft(object):
     def qdyn(self):
         return 0.5*self.TAS*self.TAS*self._rho
     
-    def set_control_surface(self, Name = 'Name of surface', coeficients = None, limits = (radians(-20), radians(20))):
+    def set_control_surface(self, Name = 'Name of the surface', coeficients = None, limits = (radians(-20), radians(20))):
         self.number_aero_controls  += 1
         self.controlsNames.append(Name)
         self.coefControls.append(coeficients)

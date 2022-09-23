@@ -184,7 +184,6 @@ class loop():
         Uapp += self.Ue
         return Uapp
 
-
 class mimoloop():
     def __init__(self):
         self.controlsNames = None
@@ -377,7 +376,6 @@ class PImimo():
     @property
     def U(self):
         return -self.zero *self.X[self.statesNames.index(self.name)] + self.Kp*self.error
-
 
 class lqr():
     def __init__(self):

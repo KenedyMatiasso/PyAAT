@@ -72,14 +72,14 @@ class system(object):
             controlsNames.append(i)
         if len(self.propulsion)!=1000:
             for anyPropeller in self.propulsion: 
-                controlsNames.append(anyPropeller.name + ' thrust')
-                controlsNames.append(anyPropeller.name + ' psip')
-                controlsNames.append(anyPropeller.name + ' thetap')
+                controlsNames.append(anyPropeller._name + ' thrust')
+                controlsNames.append(anyPropeller._name + ' psip')
+                controlsNames.append(anyPropeller._name + ' thetap')
                 
         else:
-            controlsNames.append(self.propulsion.name + ' thrust')
-            controlsNames.append(self.propulsion.name + ' psip')
-            controlsNames.append(self.propulsion.name + ' thetap')
+            controlsNames.append(self.propulsion._name + ' thrust')
+            controlsNames.append(self.propulsion._name + ' psip')
+            controlsNames.append(self.propulsion._name + ' thetap')
             
         return controlsNames
     
@@ -121,28 +121,22 @@ class system(object):
         p = X[9]
         q = X[10]
         r = X[11]
-        pqr =array([p, q, r])
+        pqr = array([p, q, r])
         
         # Aircraft
         m = self.aircraft._mass
         Inertia = self.aircraft.inertia
         InvInertia = self.aircraft.invInertia
         
-        #print('Inertia', Inertia)
-        #print('masss', m)
-        #print('InvInertia', InvInertia)
-        
         #gravity model
-        self.gravity._altitude = -z
-        g = self.gravity._gravity
+        self.gravity.set_altitude(-z)
+        g = self.gravity.get_gravity()
         F_gravity_earth = m*g
         F_gravity_body = earth2body(F_gravity_earth, psi, theta, phi)
-        #print('F_gravity_body', F_gravity_body)
         
         #Atmospheric model
-        self.atmosphere._altitude = -z
-        rho = self.atmosphere._rho
-        #print('rho', rho)
+        self.atmosphere.set_altitude(-z)
+        rho = self.atmosphere.get_airDensity()
 
         #Aerodynamic model
         self.aircraft._rho = rho
@@ -160,11 +154,7 @@ class system(object):
         alpha, beta, TAS = computeTAS(uvw)
        
         self.aircraft.U = U
-        
-        #print('alpha', alpha)
-        #print('beta', beta)
-        #print('TAS', TAS)
-        
+                
         self.aircraft.alpha = alpha
         self.aircraft.beta = beta
         self.aircraft.TAS = TAS
@@ -179,14 +169,9 @@ class system(object):
         
         F_aero_aero = self.aircraft.Forces
         M_aero_aero = self.aircraft.Moments
-        #print('F_aero_aero', F_aero_aero)
-        #print('M_aero_aero', M_aero_aero)
         
         F_aero_body = aero2body(F_aero_aero, alpha, beta)
         M_aero_body = aero2body(M_aero_aero, alpha, beta)
-        
-        #print('M_aero_body', M_aero_body)
-        #print('F_aero_body', F_aero_body)
         
         #Propulsion model
         F_prop_body = np.zeros(3)
@@ -195,25 +180,23 @@ class system(object):
         if len(self.propulsion)!=1000:
             for i in range(len(self.propulsion)):
                 if U[self.aircraft.number_aero_controls + 3*i]>=1:
-                    self.propulsion[i].delta_p = 1.0
+                    self.propulsion[i].set_delta_p(1.0)
                 elif U[self.aircraft.number_aero_controls + 3*i]<=0:
-                    self.propulsion[i].delta_p = 0.0
+                    self.propulsion[i].set_delta_p(0.0)
                 else:
-                    self.propulsion[i].delta_p = U[self.aircraft.number_aero_controls + 3*i]
+                    self.propulsion[i].set_delta_p(U[self.aircraft.number_aero_controls + 3*i])
                     
-                self.propulsion[i]._rho = rho
-                self.propulsion[i].attitude = array([U[self.aircraft.number_aero_controls + 3*i + 1], U[self.aircraft.number_aero_controls + 3*i +2], 0.])
-                F_prop_body += self.propulsion[i].Forces
-                M_prop_body += self.propulsion[i].Moments
+                self.propulsion[i].set_airDensity(rho)
+                self.propulsion[i].set_attitude(array([U[self.aircraft.number_aero_controls + 3*i + 1], U[self.aircraft.number_aero_controls + 3*i +2], 0.]))
+                F_prop_body += self.propulsion[i].get_forces()
+                M_prop_body += self.propulsion[i].get_moments()
         else:
             self.propulsion.delta_p = U[self.aircraft.number_aero_controls + 1]
             self.propulsion._rho = rho
             self.propulsion.attitude = array([U[self.aircraft.number_aero_controls + 1], U[self.aircraft.number_aero_controls + 2], 0.])
-            F_prop_body = np.array(self.propulsion.Forces)
-            M_prop_body = np.array(self.propulsion.Moments)
+            F_prop_body = np.array(self.propulsion.get_forces())
+            M_prop_body = np.array(self.propulsion.get_moments())
         
-        #print('M_prop_body', M_prop_body)
-        #print('F_prop_body', F_prop_body)
         """
         Kinematics
         """
@@ -239,8 +222,6 @@ class system(object):
         u_d = uvw_d[0]
         v_d = uvw_d[1]
         w_d = uvw_d[2]
-        
-        #print('uvw_d', uvw_d)
             
         # Angular Dynamics
         Moments = M_aero_body + M_prop_body

@@ -6,7 +6,7 @@ Distributed under MIT License
 Aerodynamic model for a convencional aicraft
 """
 from numpy import array, radians
-from constants import RHO_SEA
+from pyaat.constants import RHO_SEA
 from numpy.linalg import inv
 
 class Aircraft(object):

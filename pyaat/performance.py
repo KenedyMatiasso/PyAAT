@@ -10,8 +10,8 @@ from numpy import linspace, sqrt
 from scipy.optimize import fsolve
 
 import matplotlib.pyplot as plt
-from tools import RootFinder
-from constants import GRAVITY
+from pyaat.tools import RootFinder
+from pyaat.constants import GRAVITY
 
 class Envelope():
     def __init__(self, system = None, plot = True, limits = [0,3000]):

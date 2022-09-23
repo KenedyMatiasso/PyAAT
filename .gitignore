@@ -2,5 +2,5 @@
 build/
 dist/
 __pycache__/
-
+PyAAT.egg-info
 *.pyc

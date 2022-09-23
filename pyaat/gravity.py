@@ -10,7 +10,7 @@ import numpy as np
 from numpy import radians, sin, cos, array, sqrt
 from abc import ABC, abstractmethod
 
-from constants import GRAVITY, MU_EARTH, R_EARTH, J2, J3, J4
+from pyaat.constants import GRAVITY, MU_EARTH, R_EARTH, J2, J3, J4
 
 
 class metaGravity(ABC):

@@ -9,14 +9,14 @@ This is the system file of PyAAT.
 #sys.setrecursionlimit(10**4)
 import numpy as np
 
-from tools import computeTAS, earth2body, aero2body, body2earth, body2euler
-from tools import trimmerClimb, linearization, trimmerGeneral
-from tools import trimmerPullUp, trimmerCurve, trimmerCruize
+from pyaat.tools import computeTAS, earth2body, aero2body, body2earth, body2euler
+from pyaat.tools import trimmerClimb, linearization, trimmerGeneral
+from pyaat.tools import trimmerPullUp, trimmerCurve, trimmerCruize
 
 
 from numpy import array, cross, arange, radians, tan, sqrt, sin, copy, transpose
 from scipy.integrate import odeint
-from pyaatcontrol import equilibrium
+from pyaat.pyaatcontrol import equilibrium
 
 class system(object):
     def __init__(self, aircraft = None, atmosphere = None, propulsion = None,
@@ -723,7 +723,7 @@ class system(object):
         return linearization(self.dynamics, Xe, Ue)
     
     def FullLinearize(self, Xe, Ue):
-        from tools import fullLinearization
+        from pyaat.tools import fullLinearization
         A, B = fullLinearization(self.ExternalSimulation, Xe, Ue)
         return A, B
     

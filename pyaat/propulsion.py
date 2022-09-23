@@ -8,8 +8,8 @@ propulsion model for turbo-propeller engine
 
 from abc import ABC, abstractmethod
 from numpy import array, cross, radians, zeros
-from constants import RHO_SEA
-from tools import body2earth
+from pyaat.constants import RHO_SEA
+from pyaat.tools import body2earth
 
 class metaPropulsion(ABC):
     def __init__(self, name, position = array([0.0, 0.0, 0.0]), attitude = array([0.0, 0.0, 0.0])):

@@ -8,7 +8,7 @@ This file implements the atmosphere models that can be used by PyAAT.
 
 from abc import ABC, abstractmethod
 from numpy import sqrt, array, interp
-from constants import R_AIR, GRAVITY, GAMMA_AIR, TEMP_SEA, PRESURE_SEA, RHO_SEA, SOUND_VEL_SEA
+from pyaat.constants import R_AIR, GRAVITY, GAMMA_AIR, TEMP_SEA, PRESURE_SEA, RHO_SEA, SOUND_VEL_SEA
 
 
 class metaAtmosphere(ABC):

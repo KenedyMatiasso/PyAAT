@@ -52,9 +52,9 @@ class Envelope():
         nrhon = 0
         if type(self.propulsion) ==list:
             for prop in self.propulsion:
-                Pmaxtotal += prop.Pmaxi
-                rhoin += prop.Pmaxi*prop.rhoi
-                nrhon += prop.Pmaxi*prop.nrho
+                Pmaxtotal += prop._Pmaxi
+                rhoin += prop._Pmaxi*prop._rhoi
+                nrhon += prop._Pmaxi*prop._nrho
                 
             nrho = nrhon/Pmaxtotal
             rhoi = rhoin/Pmaxtotal
@@ -65,8 +65,8 @@ class Envelope():
             sqrt(3*self.k**3*self.CD0)))**( 2/(2*nrho + 1))
         
     def findCeling(self, h):
-        self.atmosphere._altitude = h
-        rho = self.atmosphere._rho
+        self.atmosphere.set_altitude(h)
+        rho = self.atmosphere.get_airDensity()
         return self.rho_min - rho
     
     def aeroLim(self, rho):
@@ -75,14 +75,14 @@ class Envelope():
     def estLim(self,rho):
         return sqrt(2*self.qmax)/rho
     
-    def propLim(self,rho):
+    def propLim(self, rho):
         def f(V):
             if type(self.propulsion) ==list:
                 Pmax = 0
                 for prop in self.propulsion:
-                    Pmax += prop.Pmaxi*(rho/prop.rhoi)**prop.nrho
+                    Pmax += prop._Pmaxi*(rho/prop._rhoi)**prop._nrho
             else:
-                Pmax = self.propulsion.Pmaxi*(self.Vi/V)*(rho/self.propulsion.rhoi)**self.propulsion.nrho
+                Pmax = self.propulsion._Pmaxi*(self.Vi/V)*(rho/self.propulsion._rhoi)**self.propulsion._nrho
                 
             return (0.5*rho*V**3*self.S*self.CD0 + 
                 (2*self.k*(self.mass*self.g)**2)/(rho*V*self.S) - Pmax)
@@ -94,8 +94,8 @@ class Envelope():
     
     def compute_limits(self):
         for h in self.hlist:
-            self.atmosphere._altitude = h
-            rho = self.atmosphere._rho   
+            self.atmosphere.set_altitude(h)
+            rho = self.atmosphere.get_airDensity()   
             self.lim_aero.append(self.aeroLim(rho))
             
             try:
@@ -123,6 +123,5 @@ class Envelope():
         plt.grid()
         plt.xlabel(r'Velocity $[m/s]$')
         plt.ylabel(r'Altitude $[m]$')
-
         plt.legend(loc = 'upper right')
         #plt.show()
